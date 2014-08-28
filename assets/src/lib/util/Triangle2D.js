@@ -1,4 +1,4 @@
-/*global define, canvas, ctx*/
+/*global define, ctx*/
 
 define("Triangle2D", ["Vector2D"], function (Vector2D) {
     "use strict";
@@ -32,6 +32,10 @@ define("Triangle2D", ["Vector2D"], function (Vector2D) {
             this._vTop = this._vTop.add(translate);
             this._vBLeft = this._vBLeft.add(translate);
             this._vBRight = this._vBRight.add(translate);
+        },
+
+        getTop: function () {
+            return this._vTop;
         },
 
         move: function (v) {

@@ -1,4 +1,4 @@
-/*global define*/
+/*global define canvas*/
 
 define("Entity", ["Vector2D"], function (Vector2D) {
     "use strict";
@@ -11,10 +11,8 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         this._pos = new Vector2D(x, y);
 
         if (width !== "undefined" && height !== "undefined") {
-            this.dimensions = {
-                width: width,
-                height: height
-            };
+            this._width = width;
+            this._height = height;
         }
     }
 
@@ -22,8 +20,8 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         constructor: Entity,
 
         _wrapAroundBounds: function (bounds) {
-            var width = (this.dimensions.width !== "undefined") ? this.dimensions.width : 0,
-                height = (this.dimensions.height !== "undefined") ? this.dimensions.height : 0;
+            var width = (this._width !== "undefined") ? this._width : 0,
+                height = (this._height !== "undefined") ? this._height : 0;
 
             var newPos = this._pos.clone();
 
@@ -53,7 +51,24 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         },
 
         setPos: function (pos) {
+            // Rounding to whole numbers when setting position
+            // improves performance when rendering in Integer values
+            // as opposed to decimal. Not necessary for this low-graphics
+            // game but good habit to remember.
+            // Reference: http://jsperf.com/drawimage-whole-pixels
             this._pos = pos;
+        },
+
+        getDimensions: function () {
+            return {
+                width: this._width,
+                height: this._height
+            };
+        },
+
+        setDimensions: function (w, h) {
+            this._width = w;
+            this._height = h;
         }
     };
 

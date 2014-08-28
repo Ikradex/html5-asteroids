@@ -18,7 +18,11 @@ requirejs.config({
         'Player': 'assets/src/Player',
         'EventTimer': 'assets/src/lib/EventTimer',
         'Entity': 'assets/src/lib/entity/Entity',
-        'CollidableEntity': 'assets/src/lib/collision/CollidableEntity'
+        'CollidableEntity': 'assets/src/lib/collision/CollidableEntity',
+        'ProjectileHandler': 'assets/src/lib/ProjectileHandler',
+        'Projectile': 'assets/src/lib/collision/Projectile',
+        'Bullet': 'assets/src/lib/collision/Bullet',
+        'Cannon': 'assets/src/lib/weapon/Cannon'
     },
     shim: {
         'soundmanager2': {

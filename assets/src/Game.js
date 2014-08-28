@@ -1,12 +1,15 @@
-/*global define, canvas, ctx, input*/
+/*global define, projectileHandler, canvas, ctx, input*/
 
-define("Build", ["Player"], function (Player) {
+define("Build", ["Player", "KeyboardState", "ProjectileHandler"], function (Player, KeyboardState, ProjectileHandler) {
     "use strict";
 
     function Game() {
         if (!(this instanceof Game)) {
             throw new TypeError("Game constructor cannot be called as a function.");
         }
+
+        window.input = new KeyboardState();
+        window.projectileHandler = new ProjectileHandler();
 
         this._started = false;
         this._paused = false;
@@ -30,6 +33,7 @@ define("Build", ["Player"], function (Player) {
 
         update: function (dt) {
             this.player.update(dt);
+            projectileHandler.update(dt);
         },
 
         render: function () {
@@ -41,6 +45,7 @@ define("Build", ["Player"], function (Player) {
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // render level, debug etc
+            projectileHandler.render();
             this.player.render();
             ctx.restore();
         },

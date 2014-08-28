@@ -83,6 +83,10 @@ define("Vector2D", [], function () {
             this.y = y;
         },
 
+        round: function () {
+            return new Vector2D(Math.round(this.x), Math.round(this.y));
+        },
+
         clone: function () {
             return new Vector2D(this.x, this.y);
         },

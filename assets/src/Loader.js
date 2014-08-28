@@ -1,11 +1,10 @@
 /*global window, define, config*/
 
 define("Loader", ['soundManager',
-    'KeyboardState',
     'PxLoader',
     'PxLoaderImage',
     'PxLoaderSound'
-], function (soundManager, KeyboardState, PxLoader) {
+], function (soundManager, PxLoader) {
     "use strict";
 
     var canvas = document.getElementById("game-canvas");
@@ -25,7 +24,6 @@ define("Loader", ['soundManager',
 
     window.canvas = canvas;
     window.ctx = ctx;
-    window.input = new KeyboardState();
 
     ctx.font = "64px AtariChunky";
     ctx.fillStyle = "#000";
