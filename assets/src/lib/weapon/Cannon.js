@@ -1,6 +1,6 @@
 /*global define, projectileHandler*/
 
-define("Cannon", ["Bullet", "Vector2D"], function (Bullet, Vector2D) {
+define("Cannon", ["Bullet"], function (Bullet) {
     "use strict";
 
     function Cannon() {
@@ -34,7 +34,7 @@ define("Cannon", ["Bullet", "Vector2D"], function (Bullet, Vector2D) {
                 // give back the opposing force 
                 return dir.scale(-1).scale(this._power);
             } else {
-                return new Vector2D(0, 0);
+                return dir.scale(0);
             }
         },
 
