@@ -1,12 +1,11 @@
-/*global define, canvas, ctx, input, imgs*/
+/*global define, canvas, ctx, input, PHYSICS_LEVEL*/
 
 define("Player", [
     "CollidableEntity",
     "Cannon",
     "Vector2D",
-    "Triangle2D",
-    "Library"
-], function (CollidableEntity, Cannon, Vector2D, Triangle2D, Library) {
+    "Triangle2D"
+], function (CollidableEntity, Cannon, Vector2D, Triangle2D) {
     "use strict";
 
     Player.inherits([CollidableEntity]);
@@ -18,8 +17,6 @@ define("Player", [
             throw new TypeError("Player constructor cannot be called as a function.");
         }
 
-        this._velocity = new Vector2D(0, 0);
-        this._acceleration = new Vector2D(0, 0);
         this._forces = new Vector2D(0, 0);
 
         this._weapon = new Cannon();
@@ -32,12 +29,6 @@ define("Player", [
         this._dTheta = 4.975; // in radians
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
-        this._bounds = {
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height
-        };
     }
 
     /* Public */
@@ -45,7 +36,6 @@ define("Player", [
     Player.prototype.update = function (dt) {
         this._updatePosition(dt);
         this._weapon.update(dt);
-        this._wrapAroundBounds(this._bounds);
     };
 
     Player.prototype.render = function () {
@@ -159,6 +149,8 @@ define("Player", [
         // reset acceleration and forces
         this._acceleration.setComponents(0, 0);
         this._forces.setComponents(0, 0);
+
+        this._wrapAroundBounds();
     };
 
     return Player;

@@ -1,4 +1,4 @@
-/*global define, projectileHandler*/
+/*global define, entityManager*/
 
 define("Weapon", [], function () {
     "use strict";
@@ -32,7 +32,7 @@ define("Weapon", [], function () {
             var force = dir.scale(this._power);
 
             projectile.propel(force, dir, dt);
-            projectileHandler.add(projectile);
+            entityManager.addProjectile(projectile);
 
             this._applyHeat(this._heatRate);
 

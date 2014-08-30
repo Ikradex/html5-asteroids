@@ -13,6 +13,15 @@ define("CollidableEntity", ["Entity"], function (Entity) {
         }
 
         this._mass = mass;
+        this._destroyed = false;
+    }
+
+    CollidableEntity.prototype.getBoundingCircle = function () {
+        return {
+            x: this.getPos().x,
+            y: this.getPos().y,
+            r: this._width / 2
+        };
     }
 
     CollidableEntity.prototype.getMass = function () {
@@ -23,15 +32,15 @@ define("CollidableEntity", ["Entity"], function (Entity) {
         this._mass = mass;
     };
 
-    CollidableEntity.prototype.intersects = function (collidableEntity) {
+    CollidableEntity.prototype.intersects = function (collidableEntity) {};
 
-    };
-
-    CollidableEntity.create = function () {
-        var entity = new CollidableEntity();
-
-        return entity;
+    CollidableEntity.prototype.isDestroyed = function () {
+        return this._destroyed;
     }
+
+    CollidableEntity.prototype.destroy = function () {
+        this._destroyed = true;
+    };
 
     return CollidableEntity;
 });

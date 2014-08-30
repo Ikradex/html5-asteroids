@@ -1,6 +1,10 @@
 /*global define, canvas, ctx*/
 
-define("Projectile", ["CollidableEntity", "Vector2D"], function (CollidableEntity, Vector2D) {
+define("Projectile", [
+    "CollidableEntity",
+    "Vector2D",
+    "Library"
+], function (CollidableEntity, Vector2D, Library) {
     "use strict";
 
     Projectile.inherits([CollidableEntity]);
@@ -30,6 +34,13 @@ define("Projectile", ["CollidableEntity", "Vector2D"], function (CollidableEntit
         };
     }
 
+    // Override CollidableEntity.intersects
+    Projectile.prototype.intersects = function (collidableEntity) {
+        var c = collidableEntity.getBoundingCircle();
+
+        return Library.pointIntersectsCircle(this._pos.x, this._pos.y, c.x, c.y, c.r);
+    };
+
     Projectile.prototype.update = function () {
         this._wrapAroundBounds(this._bounds);
         this._pos = this._pos.add(this._velocity);
@@ -40,8 +51,6 @@ define("Projectile", ["CollidableEntity", "Vector2D"], function (CollidableEntit
     Projectile.prototype.propel = function (force, dir, dt) {
         this._acceleration = new Vector2D(force.x / this._mass, force.y / this._mass);
         this._velocity = this._velocity.add(this._acceleration.scale(dt));
-
-        console.log(this._velocity);
 
         this._active = true;
         this._acceleration.setComponents(0, 0);

@@ -43,7 +43,7 @@ define("Loader", ['soundManager',
 
     for (var i = 1; i < 6; i++) {
         var url = baseImgUrl + "asteroid" + i + ".svg";
-        imgs["asteroids" + (i - 1)] = loader.addImage(url, "asteroid_" + i);
+        imgs["asteroid_" + (i - 1)] = loader.addImage(url, "asteroid_" + i);
     }
 
     imgs["ship"] = loader.addImage(baseImgUrl + "ship.png");

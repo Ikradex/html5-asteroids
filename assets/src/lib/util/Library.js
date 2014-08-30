@@ -50,6 +50,20 @@ define("Library", [], function () {
         }
     };
 
+    Library.randomBoolean = function () {
+        return (Library.randomInteger(0, 1) == 1);
+    };
+
+    Library.randomXY = function (min, max, negValues) {
+        var x = Library.randomDouble(min, max) * ((negValues && Library.randomBoolean()) ? 1 : -1),
+            y = Library.randomDouble(min, max) * ((negValues && Library.randomBoolean()) ? 1 : -1);
+
+        return {
+            x: x,
+            y: y
+        };
+    };
+
     /**
      * Determines whether two circles intersect
      * Returns the distance between origins is less than the combined radii of the circles
@@ -101,6 +115,25 @@ define("Library", [], function () {
             y: origin.y + radius * Math.sin(angle)
         };
     };
+
+    Library.pointIntersectsCircle = function (pX, pY, cX, cY, cR) {
+        var x = pX - cX,
+            y = pY - cY,
+            rr = cR * cR;
+
+        return ((x * x) + (y * y) <= rr);
+    };
+
+    Library.postCollisionVelocity = function (v1, v2, m1, m2) {
+        return {
+            x: (v1.x * (m1 - m2) + (2 * m2 * v2.x)) / (m1 + m2),
+            y: (v1.y * (m1 - m2) + (2 * m2 * v2.y)) / (m1 + m2)
+        };
+    }
+
+    Library.removeArrayElem = function (array, elem) {
+        return array.splice(array.indexOf(elem), 1);
+    }
 
     Library.toRadians = function (deg) {
         return deg * (Math.PI / 180);

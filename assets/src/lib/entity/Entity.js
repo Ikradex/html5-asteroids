@@ -9,42 +9,24 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         }
 
         this._pos = new Vector2D(x, y);
+        this._velocity = new Vector2D(0, 0);
+        this._acceleration = new Vector2D(0, 0);
 
         if (width !== "undefined" && height !== "undefined") {
             this._width = width;
             this._height = height;
         }
+
+        this._bounds = {
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height
+        };
     }
 
     Entity.prototype = {
         constructor: Entity,
-
-        _wrapAroundBounds: function (bounds) {
-            var width = (this._width !== "undefined") ? this._width : 0,
-                height = (this._height !== "undefined") ? this._height : 0;
-
-            var newPos = this._pos.clone();
-
-            if (newPos.x < bounds.x - width) {
-                newPos.x = (bounds.x + bounds.width) + width;
-            }
-
-            if (newPos.x > (bounds.x + bounds.width) + width) {
-                newPos.x = bounds.x - width;
-            }
-
-            if (newPos.y < bounds.y - height) {
-                newPos.y = (bounds.y + bounds.height) + height;
-            }
-
-            if (newPos.y > (bounds.y + bounds.height) + height) {
-                newPos.y = bounds.y - height;
-            }
-
-            if (newPos.x != this._pos.x || newPos.y != this._pos.y) {
-                this.setPos(newPos);
-            }
-        },
 
         getPos: function () {
             return this._pos;
@@ -69,6 +51,37 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         setDimensions: function (w, h) {
             this._width = w;
             this._height = h;
+        },
+
+        _updatePosition: function (dt) {
+            this._pos = this._pos.add(this._velocity.scale(dt));
+        },
+
+        _wrapAroundBounds: function () {
+            var width = (this._width !== "undefined") ? this._width : 0,
+                height = (this._height !== "undefined") ? this._height : 0;
+
+            var newPos = this._pos.clone();
+
+            if (newPos.x < this._bounds.x - width) {
+                newPos.x = (this._bounds.x + this._bounds.width) + width;
+            }
+
+            if (newPos.x > (this._bounds.x + this._bounds.width) + width) {
+                newPos.x = this._bounds.x - width;
+            }
+
+            if (newPos.y < this._bounds.y - height) {
+                newPos.y = (this._bounds.y + this._bounds.height) + height;
+            }
+
+            if (newPos.y > (this._bounds.y + this._bounds.height) + height) {
+                newPos.y = this._bounds.y - height;
+            }
+
+            if (newPos.x != this._pos.x || newPos.y != this._pos.y) {
+                this.setPos(newPos);
+            }
         }
     };
 

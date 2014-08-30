@@ -1,6 +1,13 @@
-/*global define, projectileHandler, canvas, ctx, input*/
+/*global define, entityManager, canvas, ctx, input*/
 
-define("Build", ["Player", "KeyboardState", "ProjectileHandler"], function (Player, KeyboardState, ProjectileHandler) {
+define("Build", [
+    "Vector2D",
+    "Library",
+    "Player",
+    "Asteroid",
+    "KeyboardState",
+    "EntityManager"
+], function (Vector2D, Library, Player, Asteroid, KeyboardState, EntityManager) {
     "use strict";
 
     function Game() {
@@ -8,15 +15,23 @@ define("Build", ["Player", "KeyboardState", "ProjectileHandler"], function (Play
             throw new TypeError("Game constructor cannot be called as a function.");
         }
 
-        window.input = new KeyboardState();
-        window.projectileHandler = new ProjectileHandler();
-
         window.PHYSICS_LEVEL = 0.5;
+
+        window.input = new KeyboardState();
+        window.entityManager = new EntityManager();
 
         this._started = false;
         this._paused = false;
 
-        this.player = new Player(canvas.width / 2, canvas.height / 2, 14, 24);
+        var player = new Player(canvas.width / 2, canvas.height / 2, 14, 24);
+
+        var randXY = Library.randomXY(20, 20, true);
+        var randVel = new Vector2D(randXY.x, randXY.y);
+
+        var asteroid = new Asteroid(Library.randomInteger(0, canvas.width), Library.randomInteger(0, canvas.height), 60, 60, randVel, 0);
+
+        entityManager.addPlayer(player);
+        entityManager.addAsteroid(asteroid);
     }
 
     Game.FPS = 80;
@@ -30,12 +45,11 @@ define("Build", ["Player", "KeyboardState", "ProjectileHandler"], function (Play
         constructor: Game,
 
         getUserInput: function (dt) {
-            this.player.processInput(dt);
+            entityManager.processInput(dt);
         },
 
         update: function (dt) {
-            this.player.update(dt);
-            projectileHandler.update(dt);
+            entityManager.update(dt);
         },
 
         render: function () {
@@ -47,8 +61,7 @@ define("Build", ["Player", "KeyboardState", "ProjectileHandler"], function (Play
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // render level, debug etc
-            projectileHandler.render();
-            this.player.render();
+            entityManager.render();
             ctx.restore();
         },
 
