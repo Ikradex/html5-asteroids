@@ -80,7 +80,5 @@ define("Loader", ['soundManager',
         console.log("Download queue complete: " + e.completedCount + " of " + e.totalCount);
     });
 
-    loader.start();
-
     return loader;
 });

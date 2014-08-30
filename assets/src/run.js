@@ -45,4 +45,6 @@ require(["Loader", "Build"], function (loader, Game) {
             setInterval(main, 1000 / Game.FPS);
         }
     });
+
+    loader.start();
 });
