@@ -1,4 +1,4 @@
-/*global define canvas*/
+/*global define, canvas*/
 
 define("Entity", ["Vector2D"], function (Vector2D) {
     "use strict";

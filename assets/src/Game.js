@@ -11,6 +11,8 @@ define("Build", ["Player", "KeyboardState", "ProjectileHandler"], function (Play
         window.input = new KeyboardState();
         window.projectileHandler = new ProjectileHandler();
 
+        window.PHYSICS_LEVEL = 0.5;
+
         this._started = false;
         this._paused = false;
 

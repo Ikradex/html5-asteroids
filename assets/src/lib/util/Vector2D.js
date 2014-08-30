@@ -78,6 +78,13 @@ define("Vector2D", [], function () {
             return Math.sqrt((this.x * this.x) + (this.y * this.y));
         },
 
+        distanceTo: function (v) {
+            var xd = v.x - this.x,
+                yd = v.y - this.y;
+
+            return Math.sqrt(xd * xd + yd * yd);
+        },
+
         setComponents: function (x, y) {
             this.x = x;
             this.y = y;

@@ -1,46 +1,34 @@
 /*global define, projectileHandler*/
 
-define("Cannon", ["Bullet"], function (Bullet) {
+define("Cannon", ["Weapon", "Bullet"], function (Weapon, Bullet) {
     "use strict";
 
+    Cannon.inherits([Weapon]);
+
     function Cannon() {
+        Weapon.apply(this, arguments);
+
         if (!(this instanceof Cannon)) {
             throw new TypeError("Cannon constructor cannot be called as a function.");
         }
 
-        this._power = 2500;
-        this._cooldown = 0;
+        this._power = 2000;
+        this._heatRate = 50;
     }
 
-    Cannon.prototype = {
-        constructor: Cannon,
-
-        update: function (dt) {
-            if (this._cooldown > 0) {
-                this._cooldown -= 1000 * dt;
-            } else {
-                this._cooldown = 0;
-            }
-        },
-
-        fire: function (shooter, x, y, dir, dt) {
-            if (this._cooldown <= 0) {
-                var bullet = new Bullet(shooter, x, y);
-                bullet.propel(this._power, dir, dt);
-                projectileHandler.add(bullet);
-
-                this._applyHeat(200);
-
-                // give back the opposing force 
-                return dir.scale(-1).scale(this._power);
-            } else {
-                return dir.scale(0);
-            }
-        },
-
-        _applyHeat: function (heat) {
-            this._cooldown += heat;
+    Cannon.prototype.update = function (dt) {
+        if (this._cooldown > 0) {
+            this._cooldown -= 1000 * dt;
+        } else {
+            this._cooldown = 0;
         }
+    };
+
+    Cannon.prototype.fire = function (shooter, x, y, velocity, dir, dt) {
+        var bullet = new Bullet(shooter, x, y, velocity),
+            force = this._propelProjectile(bullet, dir, dt);
+
+        return force;
     };
 
     return Cannon;

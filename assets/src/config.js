@@ -3,7 +3,7 @@ requirejs.config({
     urlArgs: "bust=" + (new Date()).getTime(),
     paths: {
         'soundmanager2': 'vendor/js/soundmanager2/soundmanager2-jsmin',
-        'soundManager': 'assets/src/lib/soundmanager',
+        'soundManager': 'assets/src/lib/util/soundmanager',
         'PxLoader': 'vendor/js/PxLoader/PxLoader',
         'PxLoaderImage': 'vendor/js/PxLoader/PxLoaderImage',
         'PxLoaderSound': 'vendor/js/PxLoader/PxLoaderSound',
@@ -13,15 +13,17 @@ requirejs.config({
         'Point': 'assets/src/lib/util/Point',
         'Vector2D': 'assets/src/lib/util/Vector2D',
         'Triangle2D': 'assets/src/lib/util/Triangle2D',
-        'Library': 'assets/src/lib/Library',
+        'Library': 'assets/src/lib/util/Library',
         'Build': 'assets/src/Game',
-        'Player': 'assets/src/Player',
-        'EventTimer': 'assets/src/lib/EventTimer',
         'Entity': 'assets/src/lib/entity/Entity',
+        'Player': 'assets/src/lib/entity/Player',
+        'Asteroid': 'assets/src/lib/entity/Asteroid',
+        'EventTimer': 'assets/src/lib/util/EventTimer',
         'CollidableEntity': 'assets/src/lib/collision/CollidableEntity',
-        'ProjectileHandler': 'assets/src/lib/ProjectileHandler',
+        'ProjectileHandler': 'assets/src/lib/util/ProjectileHandler',
         'Projectile': 'assets/src/lib/collision/Projectile',
-        'Bullet': 'assets/src/lib/collision/Bullet',
+        'Bullet': 'assets/src/lib/weapon/Bullet',
+        'Weapon': 'assets/src/lib/weapon/Weapon',
         'Cannon': 'assets/src/lib/weapon/Cannon'
     },
     shim: {
@@ -45,8 +47,8 @@ requirejs.config({
 
 var conf = {
     viewport: {
-        width: 800,
-        height: 600
+        width: 750,
+        height: 550
     }
 };
 
