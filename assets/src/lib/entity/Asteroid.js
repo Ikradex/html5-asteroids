@@ -10,7 +10,7 @@ define("Asteroid", [
     Asteroid.inherits([CollidableEntity]);
 
     function Asteroid(x, y, width, height, velocity, stage) {
-        CollidableEntity.apply(this, [x, y, width, height, 1000]); // call super
+        CollidableEntity.apply(this, [x, y, width, height, 5]); // call super
 
         if (!(this instanceof Asteroid)) {
             throw new TypeError("Asteroid constructor cannot be called as a function.");
@@ -37,7 +37,7 @@ define("Asteroid", [
     };
 
     // Override CollidableEntity.destroy
-    Asteroid.prototype.destroy = function () {
+    Asteroid.prototype.destroy = function (entity) {
         var children = [];
 
         if (this._stage < Asteroid.MAX_DEATH_SPAWNS) {
@@ -45,10 +45,17 @@ define("Asteroid", [
                 var newX = this._pos.x + Library.randomInteger(-10, 10),
                     newY = this._pos.y + Library.randomInteger(-10, 10);
 
-                var velFactorX = Library.randomDouble(1, 2),
-                    velFactorY = Library.randomDouble(1, 2);
+                var velFactorX = Library.randomDouble(1.2, 2),
+                    velFactorY = Library.randomDouble(1.2, 2);
 
                 var velocity = new Vector2D(this._velocity.x * velFactorX, this._velocity.y * velFactorY);
+
+                if (typeof entity !== "undefined" && entity != null) {
+                    var postXY = Library.postCollisionVelocity(this._velocity, this._mass, entity.getVelocity(), entity.getMass()),
+                        postVel = new Vector2D(postXY.x, postXY.y);
+
+                    velocity = velocity.add(postVel);
+                }
 
                 var child = new Asteroid(newX, newY, this._width / 2, this._height / 2, velocity, this._stage + 1);
                 children.push(child);
