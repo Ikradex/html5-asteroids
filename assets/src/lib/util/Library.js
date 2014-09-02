@@ -3,6 +3,21 @@
 define("Library", [], function () {
     "use strict";
 
+    /**
+     * Count the elements of enumerable
+     *
+     * @param  {[type]} obj [description]
+     * @return {[type]}     [description]
+     */
+    Object.size = function (obj) {
+        var size = 0,
+            key;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+
     // "extends" is a reserved word in ECMAScript
     Function.prototype.inherits = function (parents) {
         for (var i = 0; i < parents.length; i++) {
@@ -54,13 +69,10 @@ define("Library", [], function () {
         return (Library.randomInteger(0, 1) == 1);
     };
 
-    Library.randomXY = function (min, max, negValues) {
-        var x = Library.randomDouble(min, max) * ((negValues && Library.randomBoolean()) ? 1 : -1),
-            y = Library.randomDouble(min, max) * ((negValues && Library.randomBoolean()) ? 1 : -1);
-
+    Library.randomXY = function (min, max) {
         return {
-            x: x,
-            y: y
+            x: Library.randomDouble(min, max),
+            y: Library.randomDouble(min, max)
         };
     };
 
@@ -124,7 +136,7 @@ define("Library", [], function () {
         return ((x * x) + (y * y) <= rr);
     };
 
-    Library.postCollisionVelocity = function (v1, v2, m1, m2) {
+    Library.elasticCollisionVelocities = function (v1, m1, v2, m2) {
         return {
             x: (v1.x * (m1 - m2) + (2 * m2 * v2.x)) / (m1 + m2),
             y: (v1.y * (m1 - m2) + (2 * m2 * v2.y)) / (m1 + m2)

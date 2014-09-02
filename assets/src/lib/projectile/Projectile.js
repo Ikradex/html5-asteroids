@@ -74,7 +74,7 @@ define("Projectile", [
 
         var distance = center.distanceTo(corner);
 
-        return distance * 0.85;
+        return distance * 0.75;
     };
 
     return Projectile;

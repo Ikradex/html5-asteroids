@@ -12,7 +12,7 @@ define("Cannon", ["Weapon", "Bullet"], function (Weapon, Bullet) {
             throw new TypeError("Cannon constructor cannot be called as a function.");
         }
 
-        this._power = 2000;
+        this._power = 850;
         this._heatRate = 50;
     }
 

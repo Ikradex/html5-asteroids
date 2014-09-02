@@ -19,16 +19,10 @@ define("Player", [
 
         this.lives = 3;
 
-        this._forces = new Vector2D(0, 0);
-
         this._weapon = new Cannon();
         this._fireLock = false;
 
         this._enginePower = 900;
-
-        this._theta = Math.PI / 2; // in radians
-        this._dTheta = 4.975; // in radians
-        this._dir = new Vector2D(-Math.cos(this._theta), -Math.sin(this._theta));
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
     }
@@ -62,7 +56,7 @@ define("Player", [
         }
 
         if (input.pressed("space")) {
-            if (!this._fireLock) {
+            if (!this._weapon.getFireLock() || !this._fireLock) {
                 this.shoot(dt);
                 this._fireLock = !this._fireLock;
             }
@@ -99,8 +93,8 @@ define("Player", [
 
         var opposingForce = this._weapon.fire(this, this._sprite.getTop().x, this._sprite.getTop().y, velocity, dir, dt);
 
-        if (game.PHYSICS_LEVEL >= 0.5) {
-            this.applyForce(opposingForce.scale(game.PHYSICS_LEVEL));
+        if (game.getConsts().PHYSICS_LEVEL >= 0.5) {
+            this.applyForce(opposingForce.scale(game.getConsts().PHYSICS_LEVEL));
         }
     };
 
@@ -121,23 +115,6 @@ define("Player", [
     };
 
     /* Private */
-
-    Player.prototype._compute_dTheta = function (dir, dt) {
-        return this._dTheta * dir * dt;
-    };
-
-    Player.prototype._compute_dForce = function (dir, force) {
-        // add XY forces of engine at direction
-        return dir.scale(force);
-    };
-
-    Player.prototype._compute_dAcceleration = function (force) {
-        return new Vector2D(force.x / this._mass, force.y / this._mass); // a = f / m
-    };
-
-    Player.prototype._compute_dVelocity = function (acceleration, dt) {
-        return acceleration.scale(dt);
-    };
 
     Player.prototype._updatePosition = function (dt) {
         this._pos = this._pos.add(this._velocity);

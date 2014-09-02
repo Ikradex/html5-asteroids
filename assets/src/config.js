@@ -15,6 +15,7 @@ requirejs.config({
         'Triangle2D': 'assets/src/lib/util/Triangle2D',
         'Library': 'assets/src/lib/util/Library',
         'Build': 'assets/src/Game',
+        'Level': 'assets/src/Level',
         'Entity': 'assets/src/lib/entity/Entity',
         'CollidableEntity': 'assets/src/lib/collision/CollidableEntity',
         'EntityManager': 'assets/src/lib/entity/EntityManager',
@@ -24,7 +25,8 @@ requirejs.config({
         'Projectile': 'assets/src/lib/projectile/Projectile',
         'Bullet': 'assets/src/lib/projectile/Bullet',
         'Weapon': 'assets/src/lib/weapon/Weapon',
-        'Cannon': 'assets/src/lib/weapon/Cannon'
+        'Cannon': 'assets/src/lib/weapon/Cannon',
+        'Minigun': 'assets/src/lib/weapon/Minigun'
     },
     shim: {
         'soundmanager2': {
@@ -47,8 +49,8 @@ requirejs.config({
 
 var conf = {
     viewport: {
-        width: 750,
-        height: 550
+        width: 650,
+        height: 450
     }
 };
 

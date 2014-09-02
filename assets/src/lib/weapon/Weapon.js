@@ -1,4 +1,4 @@
-/*global define, entityManager*/
+/*global define, game*/
 
 define("Weapon", [], function () {
     "use strict";
@@ -11,6 +11,7 @@ define("Weapon", [], function () {
         this._power = 1000;
         this._cooldown = 0;
         this._heatRate = 75;
+        this._fireLock = true;
     }
 
     Weapon.prototype = {
@@ -24,6 +25,10 @@ define("Weapon", [], function () {
             }
         },
 
+        getFireLock: function () {
+            return this._fireLock;
+        },
+
         _propelProjectile: function (projectile, dir, dt) {
             if (this._cooldown > 0) {
                 return dir.scale(0);
@@ -32,7 +37,7 @@ define("Weapon", [], function () {
             var force = dir.scale(this._power);
 
             projectile.propel(force, dir, dt);
-            entityManager.addProjectile(projectile);
+            game.entityManager.addProjectile(projectile);
 
             this._applyHeat(this._heatRate);
 

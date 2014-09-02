@@ -94,43 +94,56 @@ define("EntityManager", ["Library"], function (Library) {
          * games.
          */
         _findCollisions: function () {
-            this._projectiles.forEach(function (projectile) {
+            loop1: for (var i = 0; i < this._projectiles.length; i++) {
+                var projectile = this._projectiles[i];
                 var shooter = projectile.getShooter();
 
-                this._asteroids.forEach(function (asteroid) {
-                    if (projectile.intersects(asteroid)) {
+                for (var j = 0; j < this._asteroids.length; j++) {
+                    var asteroid = this._asteroids[j];
+
+                    if (!projectile.isDestroyed() && projectile.intersects(asteroid)) {
+                        this._destroyAsteroid(asteroid, projectile);
+
                         projectile.destroy();
                         Library.removeArrayElem(this._projectiles, projectile);
+                        projectile = null;
 
-                        this._destroyAsteroid(asteroid);
+                        continue loop1;
                     }
-                }.bind(this));
+                }
 
-                this._players.forEach(function (player) {
+                for (var j = 0; j < this._players.length; j++) {
+                    var player = this._players[j];
+
                     if (player !== shooter && projectile.intersects(player)) {
                         projectile.destroy();
                         Library.removeArrayElem(this._projectiles, projectile);
 
                         player.destroy();
-                    }
-                }.bind(this));
 
-                this._enemies.forEach(function (enemy) {
+                        continue loop1;
+                    }
+                }
+
+                for (var j = 0; j < this._enemies.length; j++) {
+                    var enemy = this._enemies[j];
                     if (enemy !== shooter && projectile.intersects(enemy)) {
+                        enemy.destroy();
+
                         projectile.destroy();
                         Library.removeArrayElem(this._projectiles, projectile);
 
-                        enemy.destroy();
+                        continue loop1;
                     }
-                }.bind(this));
-            }.bind(this));
+                }
+            }
 
             this._players.forEach(function (player) {
                 this._asteroids.forEach(function (asteroid) {
                     if (player.intersects(asteroid)) {
                         player.destroy();
 
-                        this._destroyAsteroid(asteroid);
+                        //this._destroyAsteroid(asteroid);
                     }
                 }.bind(this));
 
@@ -147,14 +160,14 @@ define("EntityManager", ["Library"], function (Library) {
                 this._asteroids.forEach(function (asteroid) {
                     if (enemy.intersects(asteroid)) {
                         enemy.destroy();
-                        this._destroyAsteroid(asteroid);
+                        //this._destroyAsteroid(asteroid);
                     }
                 });
             }.bind(this));
         },
 
-        _destroyAsteroid: function (asteroid) {
-            var children = asteroid.destroy(); // get the child asteroids
+        _destroyAsteroid: function (asteroid, entity) {
+            var children = asteroid.destroy(entity); // get the child asteroids
             Library.removeArrayElem(this._asteroids, asteroid);
 
             children.forEach(function (child) {
@@ -162,6 +175,22 @@ define("EntityManager", ["Library"], function (Library) {
             }.bind(this));
 
             asteroid = null;
+        },
+
+        getAsteroids: function () {
+            return this._asteroids;
+        },
+
+        getEnemies: function () {
+            return this._enemies;
+        },
+
+        getPlayers: function () {
+            return this._players;
+        },
+
+        getProjectiles: function () {
+            return this._projectiles;
         },
 
         clearAsteroids: function () {

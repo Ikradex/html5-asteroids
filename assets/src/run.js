@@ -9,6 +9,8 @@ require(["Loader", "Build"], function (loader, Game) {
         //==============================//
 
         var game = new Game();
+        window.game = game;
+
         game.start();
 
         var animationFrame =

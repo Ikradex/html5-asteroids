@@ -1,18 +1,17 @@
 /*global define*/
 
-define("CollidableEntity", ["Entity"], function (Entity) {
+define("CollidableEntity", ["Entity", "Library"], function (Entity, Library) {
     "use strict";
 
     CollidableEntity.inherits([Entity]);
 
     function CollidableEntity(x, y, width, height, mass) {
-        Entity.apply(this, [x, y, width, height]);
+        Entity.apply(this, [x, y, width, height, mass]);
 
         if (!(this instanceof CollidableEntity)) {
             throw new TypeError("CollidableEntity constructor cannot be called as a function.");
         }
 
-        this._mass = mass;
         this._destroyed = false;
     }
 
@@ -22,17 +21,14 @@ define("CollidableEntity", ["Entity"], function (Entity) {
             y: this.getPos().y,
             r: this._width / 2
         };
-    }
-
-    CollidableEntity.prototype.getMass = function () {
-        return this._mass;
     };
 
-    CollidableEntity.prototype.setMass = function (mass) {
-        this._mass = mass;
-    };
+    CollidableEntity.prototype.intersects = function (collidableEntity) {
+        var c1 = this.getBoundingCircle(),
+            c2 = collidableEntity.getBoundingCircle();
 
-    CollidableEntity.prototype.intersects = function (collidableEntity) {};
+        return Library.circlesIntersect(c1.x, c1.y, c1.r, c2.x, c2.y, c2.r);
+    };
 
     CollidableEntity.prototype.isDestroyed = function () {
         return this._destroyed;
