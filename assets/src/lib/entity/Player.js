@@ -1,4 +1,4 @@
-/*global define, canvas, ctx, input, PHYSICS_LEVEL*/
+/*global define, canvas, ctx, game*/
 
 define("Player", [
     "CollidableEntity",
@@ -11,25 +11,29 @@ define("Player", [
     Player.inherits([CollidableEntity]);
 
     function Player(x, y, width, height) {
-        CollidableEntity.apply(this, [x, y, width, height, 100]); // call super
+        CollidableEntity.apply(this, [x, y, width, height, 300]); // call super
 
         if (!(this instanceof Player)) {
             throw new TypeError("Player constructor cannot be called as a function.");
         }
+
+        this.lives = 3;
 
         this._forces = new Vector2D(0, 0);
 
         this._weapon = new Cannon();
         this._fireLock = false;
 
-        this._enginePower = 350;
+        this._enginePower = 900;
 
-        this._dir = new Vector2D(-Math.cos(this._theta), -Math.sin(this._theta));
         this._theta = Math.PI / 2; // in radians
         this._dTheta = 4.975; // in radians
+        this._dir = new Vector2D(-Math.cos(this._theta), -Math.sin(this._theta));
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
     }
+
+    Player.MAX_LIVES = 4;
 
     /* Public */
 
@@ -40,13 +44,11 @@ define("Player", [
 
     Player.prototype.render = function () {
         this._sprite.render();
-
-        /*ctx.beginPath();
-        ctx.arc(this._pos.x, this._pos.y, 1, 0, 2 * Math.PI, false);
-        ctx.stroke();*/
     };
 
     Player.prototype.processInput = function (dt) {
+        var input = game.input;
+
         if (input.pressed("A") || input.pressed("left")) {
             this.rotate(this._compute_dTheta(-1, dt));
         }
@@ -97,8 +99,8 @@ define("Player", [
 
         var opposingForce = this._weapon.fire(this, this._sprite.getTop().x, this._sprite.getTop().y, velocity, dir, dt);
 
-        if (PHYSICS_LEVEL >= 0.5) {
-            this.applyForce(opposingForce.scale(0.5));
+        if (game.PHYSICS_LEVEL >= 0.5) {
+            this.applyForce(opposingForce.scale(game.PHYSICS_LEVEL));
         }
     };
 
