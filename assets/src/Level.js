@@ -17,42 +17,61 @@ define([
         this._levelNum = levelNum;
 
         this.start();
+
+        this._spawnPlayer();
+
+        this.resetTimer = new EventTimer(Level.RESET_INTERVAL, function () {
+            this.start();
+        }.bind(this));
     }
 
     Level.MIN_ASTEROIDS = 4;
     Level.MAX_ASTEROIDS = 12;
     Level.ASTEROID_INIT_MASS = 1000;
+    Level.RESET_INTERVAL = 1000;
 
     Level.prototype = {
         constructor: Level,
 
         update: function (dt) {
+            game.entityManager.update(dt);
 
+            if (this.over()) {
+                this.resetTimer.wait(dt)
+            }
         },
 
         render: function () {
-
+            game.entityManager.render();
         },
 
         start: function () {
-            this.spawnPlayer();
+            game.entityManager.clearEnemies();
+            game.entityManager.clearAsteroids();
+            game.entityManager.clearProjectiles();
+
+            this._levelNum++;
 
             var asteroidsToSpawn = (Level.MIN_ASTEROIDS + this.getLevelNum() <= Level.MAX_ASTEROIDS) ?
                 Level.MIN_ASTEROIDS + this.getLevelNum() : Level.MAX_ASTEROIDS;
 
             for (var i = 0; i < asteroidsToSpawn; i++) {
-                this.spawnAsteroid();
+                this._spawnAsteroid();
             }
         },
 
-        spawnPlayer: function () {
+        over: function () {
+            return (game.entityManager.getAsteroids().length <= 0);
+        },
+
+        _spawnPlayer: function () {
             var spawnPos = this.getPlayerSpawnPos(),
                 player = new Player(spawnPos.x, spawnPos.y, 14, 24);
 
             game.entityManager.addPlayer(player);
         },
 
-        spawnAsteroid: function () {
+        _spawnAsteroid: function () {
             // get asteroid random position
             var spawnRadius = 50;
 
@@ -62,10 +81,12 @@ define([
             };
 
             // prevent spawning on player
-            var pXPos = Library.randomInteger(Asteroid.DEFAULT_WIDTH / 2, this.getPlayerSpawnPos().x - spawnRadius),
-                pXNeg = Library.randomInteger(this.getPlayerSpawnPos().x + spawnRadius, canvas.width - asteroidDim.width / 2),
-                pYPos = Library.randomInteger(asteroidDim.height / 2, this.getPlayerSpawnPos().y - spawnRadius),
-                pYNeg = Library.randomInteger(this.getPlayerSpawnPos().y + spawnRadius, canvas.height - asteroidDim.height / 2);
+            var playerPos = (game.entityManager.getPlayers().length > 0) ? game.entityManager.getPlayers()[0].getPos() : this.getPlayerSpawnPos();
+
+            var pXPos = Library.randomInteger(Asteroid.DEFAULT_WIDTH / 2, playerPos.x - spawnRadius),
+                pXNeg = Library.randomInteger(playerPos.x + spawnRadius, canvas.width - asteroidDim.width / 2),
+                pYPos = Library.randomInteger(asteroidDim.height / 2, playerPos.y - spawnRadius),
+                pYNeg = Library.randomInteger(playerPos.y + spawnRadius, canvas.height - asteroidDim.height / 2);
 
             var pX = Library.randomBoolean() ? pXPos : pXNeg,
                 pY = Library.randomBoolean() ? pYPos : pYNeg;

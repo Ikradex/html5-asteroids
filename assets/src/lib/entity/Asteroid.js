@@ -22,7 +22,7 @@ define("Asteroid", [
         this._img = imgs["asteroid_" + Library.randomInteger(1, 5)];
     }
 
-    Asteroid.MIN_VELOCITY = 10;
+    Asteroid.MIN_VELOCITY = 20;
     Asteroid.MAX_VELOCITY = 80;
 
     Asteroid.DEFAULT_WIDTH = 60;
@@ -59,11 +59,11 @@ define("Asteroid", [
         if (this._stage < Asteroid.MAX_DEATH_SPAWNS) {
             for (var i = 0; i < Asteroid.NUM_CHILD_SPAWNS; i++) {
                 // spawn a little off center
-                var newX = this._pos.x + Library.randomInteger(-5, 5),
-                    newY = this._pos.y + Library.randomInteger(-5, 5);
+                var newX = this._pos.x + Library.randomInteger(-8, 8),
+                    newY = this._pos.y + Library.randomInteger(-8, 8);
 
-                var velFactorX = Library.randomDouble(0.8, 1.8),
-                    velFactorY = Library.randomDouble(0.8, 1.8);
+                var velFactorX = Library.randomDouble(0.8, 2),
+                    velFactorY = Library.randomDouble(0.8, 2);
 
                 var velocity = new Vector2D(this._velocity.x * velFactorX, this._velocity.y * velFactorY);
 

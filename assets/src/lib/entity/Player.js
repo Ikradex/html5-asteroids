@@ -22,7 +22,7 @@ define("Player", [
         this._weapon = new Cannon();
         this._fireLock = false;
 
-        this._enginePower = 900;
+        this._enginePower = 700;
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
     }

@@ -19,13 +19,15 @@ define("Build", [
 
         this._started = false;
         this._paused = false;
+
+        this._currentLevel = null;
     }
 
     Game.DEFAULT_WIDTH = 650;
     Game.DEFAULT_HEIGHT = 450;
 
-    Game.INIT_LEVEL_NUM = 0;
-    Game.PHYSICS_LEVEL = 0.5;
+    Game.PHYSICS_LEVEL = 0;
+    Game.INIT_LEVEL_NUM = -1;
     Game.GRAV_CONST = 1;
     Game.DEBUG = true;
     Game.FPS = 80;
@@ -42,17 +44,10 @@ define("Build", [
             this.entityManager.processInput(dt);
         },
 
-        getConsts: function () {
-            return {
-                DEFAULT_WIDTH: Game.DEFAULT_WIDTH,
-                DEFAULT_HEIGHT: Game.DEFAULT_HEIGHT,
-                GRAV_CONST: Game.GRAV_CONST,
-                PHYSICS_LEVEL: Game.PHYSICS_LEVEL,
-            }
-        },
-
         update: function (dt) {
-            this.entityManager.update(dt);
+            if (this._currentLevel != null && this._started && !this._paused) {
+                this._currentLevel.update(dt);
+            }
         },
 
         render: function () {
@@ -64,7 +59,7 @@ define("Build", [
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // render level, debug etc
-            this.entityManager.render();
+            this._currentLevel.render();
 
             if (Game.DEBUG) {
                 ctx.font = "9px Monospace";
@@ -75,6 +70,15 @@ define("Build", [
                 ctx.fillText("Projectiles: " + this.entityManager.getProjectiles().length, canvas.width - 100, 80);
             }
             ctx.restore();
+        },
+
+        getConsts: function () {
+            return {
+                DEFAULT_WIDTH: Game.DEFAULT_WIDTH,
+                DEFAULT_HEIGHT: Game.DEFAULT_HEIGHT,
+                GRAV_CONST: Game.GRAV_CONST,
+                PHYSICS_LEVEL: Game.PHYSICS_LEVEL,
+            }
         },
 
         start: function () {
