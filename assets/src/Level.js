@@ -21,6 +21,7 @@ define([
 
     Level.MIN_ASTEROIDS = 4;
     Level.MAX_ASTEROIDS = 12;
+    Level.ASTEROID_INIT_MASS = 1000;
 
     Level.prototype = {
         constructor: Level,
@@ -82,7 +83,7 @@ define([
 
             var randVel = new Vector2D(velX, velY); // random velocity
 
-            var asteroid = new Asteroid(pX, pY, 60, 60, randVel, 0);
+            var asteroid = new Asteroid(pX, pY, 60, 60, Level.ASTEROID_INIT_MASS, randVel, 1);
 
             game.entityManager.addAsteroid(asteroid);
         },

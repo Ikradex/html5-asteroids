@@ -9,8 +9,8 @@ define("Asteroid", [
 
     Asteroid.inherits([CollidableEntity]);
 
-    function Asteroid(x, y, width, height, velocity, stage) {
-        CollidableEntity.apply(this, [x, y, width, height, Asteroid.INIT_MASS]); // call super
+    function Asteroid(x, y, width, height, mass, velocity, stage) {
+        CollidableEntity.apply(this, [x, y, width, height, Math.round(mass / stage)]); // call super
 
         if (!(this instanceof Asteroid)) {
             throw new TypeError("Asteroid constructor cannot be called as a function.");
@@ -19,19 +19,17 @@ define("Asteroid", [
         this._velocity = velocity;
         this._stage = (stage !== "undefined" && stage !== null) ? stage : 0;
 
-        console.debug(imgs);
         this._img = imgs["asteroid_" + Library.randomInteger(1, 5)];
     }
 
-    Asteroid.INIT_MASS = 1000;
-    Asteroid.MIN_VELOCITY = 20;
+    Asteroid.MIN_VELOCITY = 10;
     Asteroid.MAX_VELOCITY = 80;
 
     Asteroid.DEFAULT_WIDTH = 60;
     Asteroid.DEFAULT_HEIGHT = 60;
 
     Asteroid.NUM_CHILD_SPAWNS = 2;
-    Asteroid.MAX_DEATH_SPAWNS = 2;
+    Asteroid.MAX_DEATH_SPAWNS = 3;
 
     Asteroid.prototype.update = function (dt) {
         this._updatePosition(dt);
@@ -41,7 +39,17 @@ define("Asteroid", [
     Asteroid.prototype.render = function () {
         ctx.save();
         ctx.drawImage(this._img, this._pos.x - this._width / 2, this._pos.y - this._height / 2, this._width, this._height);
+        ctx.fillStyle = "#FFF";
         ctx.restore();
+    };
+
+    Asteroid.prototype._updatePosition = function (dt) {
+        this._velocity = this._velocity.add(this._acceleration);
+
+        this._pos = this._pos.add(this._velocity.scale(dt));
+
+        this._acceleration.setComponents(0, 0);
+        this._forces.setComponents(0, 0);
     };
 
     // Override CollidableEntity.destroy
@@ -67,7 +75,7 @@ define("Asteroid", [
                     velocity = velocity.add(postVel);
                 }*/
 
-                var child = new Asteroid(newX, newY, this._width / 2, this._height / 2, velocity, this._stage + 1);
+                var child = new Asteroid(newX, newY, this._width / 2, this._height / 2, this._mass, velocity, this._stage + 1);
                 children.push(child);
             }
         }

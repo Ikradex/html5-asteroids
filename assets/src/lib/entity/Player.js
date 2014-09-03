@@ -88,19 +88,16 @@ define("Player", [
     };
 
     Player.prototype.shoot = function (dt) {
+        var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
+
         var velocity = this._velocity.clone(),
             dir = this._dir.clone();
 
         var opposingForce = this._weapon.fire(this, this._sprite.getTop().x, this._sprite.getTop().y, velocity, dir, dt);
 
-        if (game.getConsts().PHYSICS_LEVEL >= 0.5) {
-            this.applyForce(opposingForce.scale(game.getConsts().PHYSICS_LEVEL));
+        if (PHYSICS_LEVEL > 0) {
+            this.applyForce(opposingForce.scale(PHYSICS_LEVEL));
         }
-    };
-
-    Player.prototype.applyForce = function (force) {
-        this._forces = this._forces.add(force);
-        this._acceleration = this._acceleration.add(this._compute_dAcceleration(this._forces));
     };
 
     // Override Entity.setPos

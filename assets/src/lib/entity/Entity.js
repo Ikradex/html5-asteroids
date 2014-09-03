@@ -80,6 +80,11 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             this._height = h;
         },
 
+        applyForce: function (force) {
+            this._forces = this._forces.add(force);
+            this._acceleration = this._acceleration.add(this._compute_dAcceleration(this._forces));
+        },
+
         _compute_dTheta: function (dir, dt) {
             return this._dTheta * dir * dt;
         },

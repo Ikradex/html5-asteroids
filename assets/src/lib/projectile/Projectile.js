@@ -19,7 +19,6 @@ define("Projectile", [
         this._shooter = shooter;
 
         this._originPos = new Vector2D(x, y);
-        this._acceleration = new Vector2D(0, 0);
         this._velocity = (velocity !== "undefined" || velocity !== null) ? velocity : new Vector2D(0, 0);
 
         this._distanceTraveled = new Vector2D(0, 0);
@@ -41,11 +40,17 @@ define("Projectile", [
         return Library.pointIntersectsCircle(this._pos.x, this._pos.y, c.x, c.y, c.r);
     };
 
-    Projectile.prototype.update = function () {
+    Projectile.prototype.update = function (dt) {
         this._wrapAroundBounds(this._bounds);
+
+        //console.debug(this._acceleration.toString());
+        this._velocity = this._velocity.add(this._acceleration);
+
         this._pos = this._pos.add(this._velocity);
 
         this._distanceTraveled = this._distanceTraveled.add(this._velocity);
+
+        this._acceleration.setComponents(0, 0);
     };
 
     Projectile.prototype.propel = function (force, dir, dt) {

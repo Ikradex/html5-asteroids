@@ -25,11 +25,6 @@ define("Library", [], function () {
         }
     };
 
-    // Avoid polluting the Array prototype
-    function contains(array, elem) {
-        return array.indexOf(elem) >= 0;
-    }
-
     function Library() {
         if (!(this instanceof Library)) {
             throw new TypeError("Library constructor cannot be called as a function.");
@@ -141,11 +136,19 @@ define("Library", [], function () {
             x: (v1.x * (m1 - m2) + (2 * m2 * v2.x)) / (m1 + m2),
             y: (v1.y * (m1 - m2) + (2 * m2 * v2.y)) / (m1 + m2)
         };
-    }
+    };
+
+    Library.forceOfGravity = function (G, m1, m2, r) {
+        return (G * m1 * m2) / (r * r);
+    };
+
+    Library.contains = function (array, elem) {
+        return array.indexOf(elem) >= 0;
+    };
 
     Library.removeArrayElem = function (array, elem) {
         return array.splice(array.indexOf(elem), 1);
-    }
+    };
 
     Library.toRadians = function (deg) {
         return deg * (Math.PI / 180);

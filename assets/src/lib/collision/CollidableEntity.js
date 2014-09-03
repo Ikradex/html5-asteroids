@@ -1,6 +1,10 @@
-/*global define*/
+/*global define, game*/
 
-define("CollidableEntity", ["Entity", "Library"], function (Entity, Library) {
+define("CollidableEntity", [
+    "Entity",
+    "Vector2D",
+    "Library"
+], function (Entity, Vector2D, Library) {
     "use strict";
 
     CollidableEntity.inherits([Entity]);
@@ -15,11 +19,25 @@ define("CollidableEntity", ["Entity", "Library"], function (Entity, Library) {
         this._destroyed = false;
     }
 
+    CollidableEntity.prototype.getGravityForce = function (collidableEntity) {
+        var angle = this.getPos().angleTo(collidableEntity.getPos()),
+            distance = this.getPos().distanceTo(collidableEntity.getPos()),
+            dir = new Vector2D(Math.cos(angle), Math.sin(angle));
+
+        var force = 0;
+
+        if (distance <= 400) {
+            force = Library.forceOfGravity(game.getConsts().GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
+        }
+
+        return dir.scale(force);
+    };
+
     CollidableEntity.prototype.getBoundingCircle = function () {
         return {
             x: this.getPos().x,
             y: this.getPos().y,
-            r: this._width / 2
+            r: this.getDimensions().width / 2
         };
     };
 

@@ -1,6 +1,6 @@
-/*global define, canvas, ctx*/
+/*global define, game, canvas, ctx*/
 
-define("EntityManager", ["Library"], function (Library) {
+define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
     "use strict";
 
     function EntityManager() {
@@ -24,7 +24,7 @@ define("EntityManager", ["Library"], function (Library) {
         },
 
         update: function (dt) {
-            this._findCollisions(dt);
+            this._processInteractions(dt);
 
             this._projectiles.forEach(function (projectile) {
                 if (projectile.getDistanceTraveled() < projectile.getMaxDistance()) {
@@ -86,6 +86,8 @@ define("EntityManager", ["Library"], function (Library) {
          * in the game. Entitys' destroy method is called
          * on intersection of entities.
          *
+         * Also links gravity interactions between objects
+         *
          * I am not sure if I'm interating too much in this
          * method. This is possible going to be the most
          * expensive function to call in the game and making
@@ -93,10 +95,14 @@ define("EntityManager", ["Library"], function (Library) {
          * of game objects is relatively lower than other
          * games.
          */
-        _findCollisions: function () {
+        _processInteractions: function () {
+            var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
+            // find interactions with projectiles
             loop1: for (var i = 0; i < this._projectiles.length; i++) {
                 var projectile = this._projectiles[i];
                 var shooter = projectile.getShooter();
+
+                var gravForce = new Vector2D(0, 0);
 
                 for (var j = 0; j < this._asteroids.length; j++) {
                     var asteroid = this._asteroids[j];
@@ -110,7 +116,16 @@ define("EntityManager", ["Library"], function (Library) {
 
                         continue loop1;
                     }
+
+                    if (PHYSICS_LEVEL > 0) {
+                        var force = projectile.getGravityForce(asteroid);
+                        gravForce = gravForce.add(force);
+
+                        asteroid.applyForce(asteroid.getGravityForce(projectile));
+                    }
                 }
+
+                projectile.applyForce(gravForce.scale(0.03));
 
                 for (var j = 0; j < this._players.length; j++) {
                     var player = this._players[j];
@@ -127,6 +142,7 @@ define("EntityManager", ["Library"], function (Library) {
 
                 for (var j = 0; j < this._enemies.length; j++) {
                     var enemy = this._enemies[j];
+
                     if (enemy !== shooter && projectile.intersects(enemy)) {
                         enemy.destroy();
 
@@ -138,32 +154,57 @@ define("EntityManager", ["Library"], function (Library) {
                 }
             }
 
-            this._players.forEach(function (player) {
-                this._asteroids.forEach(function (asteroid) {
+            // interactions with asteroids
+            loop2: for (var i = 0; i < this._players.length; i++) {
+                var player = this._players[i];
+
+                var gravforceOnPlayer = new Vector2D(0, 0);
+
+                for (var j = 0; j < this._asteroids.length; j++) {
+                    var asteroid = this._asteroids[j];
+
                     if (player.intersects(asteroid)) {
                         player.destroy();
 
-                        //this._destroyAsteroid(asteroid);
-                    }
-                }.bind(this));
+                        this._destroyAsteroid(asteroid, player);
+                        //asteroid = null;
 
-                this._enemies.forEach(function (enemy) {
-                    if (player.intersects(enemy)) {
-                        // enemies are not affected by colliding players
-                        // however players are killed instantly
-                        player.destroy();
+                        continue loop2;
                     }
-                });
-            }.bind(this));
 
-            this._enemies.forEach(function (enemy) {
-                this._asteroids.forEach(function (asteroid) {
+                    if (PHYSICS_LEVEL > 0) {
+                        var forceOnPlayer = player.getGravityForce(asteroid);
+                        gravforceOnPlayer = gravforceOnPlayer.add(forceOnPlayer);
+
+                        asteroid.applyForce(asteroid.getGravityForce(player).scale(PHYSICS_LEVEL));
+                    }
+                }
+
+                player.applyForce(gravforceOnPlayer.scale(PHYSICS_LEVEL));
+            }
+
+            loop3: for (var i = 0; i < this._enemies.length; i++) {
+                var enemy = this._enemies[i];
+
+                if (player.intersects(enemy)) {
+                    // enemies are not affected by colliding players
+                    // however players are killed instantly
+                    player.destroy();
+                }
+            }
+
+            for (var i = 0; i < this._enemies.length; i++) {
+                var enemy = this._enemies[i];
+
+                for (var j = 0; j < this._asteroids.length; j++) {
+                    var asteroid = this._asteroids[j];
+
                     if (enemy.intersects(asteroid)) {
                         enemy.destroy();
-                        //this._destroyAsteroid(asteroid);
+                        this._destroyAsteroid(asteroid);
                     }
-                });
-            }.bind(this));
+                };
+            }
         },
 
         _destroyAsteroid: function (asteroid, entity) {
@@ -173,8 +214,6 @@ define("EntityManager", ["Library"], function (Library) {
             children.forEach(function (child) {
                 this.addAsteroid(child);
             }.bind(this));
-
-            asteroid = null;
         },
 
         getAsteroids: function () {

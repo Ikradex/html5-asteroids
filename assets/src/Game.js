@@ -26,7 +26,7 @@ define("Build", [
 
     Game.INIT_LEVEL_NUM = 0;
     Game.PHYSICS_LEVEL = 0.5;
-    Game.GRAV_CONST = 100;
+    Game.GRAV_CONST = 1;
     Game.DEBUG = true;
     Game.FPS = 80;
 
@@ -46,6 +46,7 @@ define("Build", [
             return {
                 DEFAULT_WIDTH: Game.DEFAULT_WIDTH,
                 DEFAULT_HEIGHT: Game.DEFAULT_HEIGHT,
+                GRAV_CONST: Game.GRAV_CONST,
                 PHYSICS_LEVEL: Game.PHYSICS_LEVEL,
             }
         },
