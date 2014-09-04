@@ -1,4 +1,4 @@
-/*global define, projectileHandler*/
+/*global define*/
 
 define("Cannon", ["Weapon", "Bullet"], function (Weapon, Bullet) {
     "use strict";

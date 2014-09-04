@@ -17,7 +17,7 @@ requirejs.config({
         'Build': 'assets/src/Game',
         'Level': 'assets/src/Level',
         'Entity': 'assets/src/lib/entity/Entity',
-        'CollidableEntity': 'assets/src/lib/collision/CollidableEntity',
+        'CollidableEntity': 'assets/src/lib/entity/CollidableEntity',
         'EntityManager': 'assets/src/lib/entity/EntityManager',
         'Player': 'assets/src/lib/entity/Player',
         'Asteroid': 'assets/src/lib/entity/Asteroid',
