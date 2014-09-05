@@ -11,7 +11,7 @@ define("Player", [
     Player.inherits([CollidableEntity]);
 
     function Player(x, y, width, height) {
-        CollidableEntity.apply(this, [x, y, width, height, 300]); // call super
+        CollidableEntity.apply(this, [x, y, width, height, Player.INIT_MASS, Player.SCORE_VALUE]); // call super
 
         if (!(this instanceof Player)) {
             throw new TypeError("Player constructor cannot be called as a function.");
@@ -27,6 +27,8 @@ define("Player", [
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
     }
 
+    Player.INIT_MASS = 300;
+    Player.SCORE_VALUE = 1000;
     Player.MAX_LIVES = 4;
 
     /* Public */

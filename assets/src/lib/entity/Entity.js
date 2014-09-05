@@ -3,10 +3,13 @@
 define("Entity", ["Vector2D"], function (Vector2D) {
     "use strict";
 
-    function Entity(x, y, width, height, mass) {
+    function Entity(x, y, width, height, mass, scoreValue) {
         if (!(this instanceof Entity)) {
             throw new TypeError("Entity constructor cannot be called as a function.");
         }
+
+        this._scoreValue = scoreValue;
+        this._score = 0;
 
         this._pos = new Vector2D(x, y);
         this._velocity = new Vector2D(0, 0);
@@ -62,6 +65,14 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             };
         },
 
+        getScore: function () {
+            return this._score;
+        },
+
+        getScoreValue: function () {
+            return this._scoreValue;
+        },
+
         setPos: function (pos) {
             // Rounding to whole numbers when setting position
             // improves performance when rendering in Integer values
@@ -78,6 +89,18 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         setDimensions: function (w, h) {
             this._width = w;
             this._height = h;
+        },
+
+        setScore: function (score) {
+            this._score = score;
+        },
+
+        addScore: function (score) {
+            this._score += score;
+        },
+
+        setScoreValue: function (scoreValue) {
+            this._scoreValue = scoreValue;
         },
 
         applyForce: function (force) {

@@ -9,8 +9,8 @@ define("CollidableEntity", [
 
     CollidableEntity.inherits([Entity]);
 
-    function CollidableEntity(x, y, width, height, mass) {
-        Entity.apply(this, [x, y, width, height, mass]);
+    function CollidableEntity(x, y, width, height, mass, scoreValue) {
+        Entity.apply(this, [x, y, width, height, mass, scoreValue]);
 
         if (!(this instanceof CollidableEntity)) {
             throw new TypeError("CollidableEntity constructor cannot be called as a function.");

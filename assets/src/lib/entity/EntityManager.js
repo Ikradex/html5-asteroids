@@ -99,8 +99,8 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
             var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
             // find interactions with projectiles
             loop1: for (var i = 0; i < this._projectiles.length; i++) {
-                var projectile = this._projectiles[i];
-                var shooter = projectile.getShooter();
+                var projectile = this._projectiles[i],
+                    shooter = projectile.getShooter();
 
                 var gravForce = new Vector2D(0, 0);
 
@@ -108,6 +108,9 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                     var asteroid = this._asteroids[j];
 
                     if (!projectile.isDestroyed() && projectile.intersects(asteroid)) {
+                        // inc shooter's score
+                        shooter.addScore(asteroid.getScoreValue());
+
                         this._destroyAsteroid(asteroid, projectile);
 
                         projectile.destroy();
@@ -131,6 +134,9 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                     var player = this._players[j];
 
                     if (player !== shooter && projectile.intersects(player)) {
+                        // inc shooter's score
+                        shooter.addScore(asteroid.getScoreValue());
+
                         projectile.destroy();
                         Library.removeArrayElem(this._projectiles, projectile);
 
@@ -156,9 +162,8 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
 
             // interactions with asteroids
             loop2: for (var i = 0; i < this._players.length; i++) {
-                var player = this._players[i];
-
-                var gravforceOnPlayer = new Vector2D(0, 0);
+                var player = this._players[i],
+                    gravforceOnPlayer = new Vector2D(0, 0);
 
                 for (var j = 0; j < this._asteroids.length; j++) {
                     var asteroid = this._asteroids[j];

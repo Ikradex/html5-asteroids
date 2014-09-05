@@ -9,8 +9,8 @@ define("Asteroid", [
 
     Asteroid.inherits([CollidableEntity]);
 
-    function Asteroid(x, y, width, height, mass, velocity, stage) {
-        CollidableEntity.apply(this, [x, y, width, height, Math.round(mass / stage)]); // call super
+    function Asteroid(x, y, width, height, mass, scoreValue, velocity, stage) {
+        CollidableEntity.apply(this, [x, y, width, height, Math.round(mass / stage), scoreValue]); // call super
 
         if (!(this instanceof Asteroid)) {
             throw new TypeError("Asteroid constructor cannot be called as a function.");
@@ -75,7 +75,7 @@ define("Asteroid", [
                     velocity = velocity.add(postVel);
                 }*/
 
-                var child = new Asteroid(newX, newY, this._width / 2, this._height / 2, this._mass, velocity, this._stage + 1);
+                var child = new Asteroid(newX, newY, this._width / 2, this._height / 2, this.getMass(), this.getScoreValue() * 2, velocity, this._stage + 1);
                 children.push(child);
             }
         }
