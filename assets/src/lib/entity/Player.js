@@ -34,12 +34,21 @@ define("Player", [
     /* Public */
 
     Player.prototype.update = function (dt) {
-        this._updatePosition(dt);
-        this._weapon.update(dt);
+        if (!this.getDestroyed()) {
+            this._updatePosition(dt);
+            this._weapon.update(dt);
+        } else {
+            // wait
+            if (game.entityManager.isRespawnClear()) {
+                this._respawn();
+            }
+        }
     };
 
     Player.prototype.render = function () {
-        this._sprite.render();
+        if (!this.getDestroyed()) {
+            this._sprite.render();
+        }
     };
 
     Player.prototype.processInput = function (dt) {
@@ -129,6 +138,19 @@ define("Player", [
         this._forces.setComponents(0, 0);
 
         this._wrapAroundBounds();
+    };
+
+    // Override CollidableEntity.destroy
+    Player.prototype.destroy = function (entity) {
+        this.setDestroyed(true);
+    };
+
+    Player.prototype._respawn = function () {
+        this.setDestroyed(false);
+
+        this.setPos(new Vector2D(canvas.width / 2, canvas.height / 2));
+
+        this.lives--;
     };
 
     return Player;

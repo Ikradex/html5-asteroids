@@ -48,9 +48,13 @@ define("CollidableEntity", [
         return Library.circlesIntersect(c1.x, c1.y, c1.r, c2.x, c2.y, c2.r);
     };
 
-    CollidableEntity.prototype.isDestroyed = function () {
+    CollidableEntity.prototype.getDestroyed = function () {
         return this._destroyed;
-    }
+    };
+
+    CollidableEntity.prototype.setDestroyed = function (destroyed) {
+        this._destroyed = destroyed;
+    };
 
     CollidableEntity.prototype.destroy = function () {
         this._destroyed = true;

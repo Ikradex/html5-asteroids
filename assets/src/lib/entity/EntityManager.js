@@ -107,7 +107,7 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 for (var j = 0; j < this._asteroids.length; j++) {
                     var asteroid = this._asteroids[j];
 
-                    if (!projectile.isDestroyed() && projectile.intersects(asteroid)) {
+                    if (!projectile.getDestroyed() && projectile.intersects(asteroid)) {
                         // inc shooter's score
                         shooter.addScore(asteroid.getScoreValue());
 
@@ -135,7 +135,7 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
 
                     if (player !== shooter && projectile.intersects(player)) {
                         // inc shooter's score
-                        shooter.addScore(asteroid.getScoreValue());
+                        shooter.addScore(player.getScoreValue());
 
                         projectile.destroy();
                         Library.removeArrayElem(this._projectiles, projectile);
@@ -150,6 +150,9 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                     var enemy = this._enemies[j];
 
                     if (enemy !== shooter && projectile.intersects(enemy)) {
+                        // inc shooter's score
+                        shooter.addScore(enemy.getScoreValue());
+
                         enemy.destroy();
 
                         projectile.destroy();
@@ -219,6 +222,27 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
             children.forEach(function (child) {
                 this.addAsteroid(child);
             }.bind(this));
+        },
+
+        isRespawnClear: function () {
+            var clear = true,
+                respawn = {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    r: 150
+                };
+
+            for (var i = 0; i < this._asteroids.length; i++) {
+                var asteroid = this._asteroids[i];
+
+                if (Library.circlesIntersect(respawn.x, respawn.y, respawn.r,
+                    asteroid.getPos().x, asteroid.getPos().y, asteroid.getDimensions().width)) {
+                    clear = false;
+                    break;
+                }
+            }
+
+            return clear;
         },
 
         getAsteroids: function () {
