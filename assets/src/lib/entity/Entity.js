@@ -126,7 +126,12 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         },
 
         _updatePosition: function (dt) {
+            this._velocity = this._velocity.add(this._acceleration);
+
             this._pos = this._pos.add(this._velocity.scale(dt));
+
+            this._acceleration.setComponents(0, 0);
+            this._forces.setComponents(0, 0);
         },
 
         _wrapAroundBounds: function () {

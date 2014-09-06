@@ -43,15 +43,6 @@ define("Asteroid", [
         ctx.restore();
     };
 
-    Asteroid.prototype._updatePosition = function (dt) {
-        this._velocity = this._velocity.add(this._acceleration);
-
-        this._pos = this._pos.add(this._velocity.scale(dt));
-
-        this._acceleration.setComponents(0, 0);
-        this._forces.setComponents(0, 0);
-    };
-
     // Override CollidableEntity.destroy
     Asteroid.prototype.destroy = function (entity) {
         var children = [];
