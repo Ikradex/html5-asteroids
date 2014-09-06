@@ -27,7 +27,7 @@ define("Player", [
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
 
-        this._respawnTimer = new EventTimer(1000, function () {
+        this._respawnTimer = new EventTimer(2000, function () {
             this._canRespawn = true;
         }.bind(this));
     }
@@ -147,6 +147,7 @@ define("Player", [
 
     /* Private */
 
+    // Override Entity._updatePosition
     Player.prototype._updatePosition = function (dt) {
         this._pos = this._pos.add(this._velocity);
         this._sprite.move(this._velocity);
