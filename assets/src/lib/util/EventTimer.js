@@ -20,7 +20,7 @@ define(function () {
             throw new TypeError("EventTimer constructor cannot be called as a function.");
         }
 
-        this._initTime = time; // the time first specified
+        this._waitTime = time; // the time first specified
         this._timeRemaining = time; // the time left until callback is called
         this._callback = callback; // the callback function
     }
@@ -48,16 +48,16 @@ define(function () {
         },
 
         reset: function () {
-            this._timeRemaining = this._initTime;
+            this._timeRemaining = this._waitTime;
         },
 
-        setInitTime: function (time) {
-            this._initTime = time;
+        setWaitTime: function (time) {
+            this._waitTime = time;
             this._timeRemaining = time;
         },
 
-        getInitTime: function () {
-            return this._initTime;
+        getWaitTime: function () {
+            return this._waitTime;
         },
 
         setTimeRemaining: function (time) {
