@@ -1,11 +1,12 @@
 /*global define, canvas, ctx, game*/
 
 define("Player", [
+    "EventTimer",
     "CollidableEntity",
     "Cannon",
     "Vector2D",
     "Triangle2D"
-], function (CollidableEntity, Cannon, Vector2D, Triangle2D) {
+], function (EventTimer, CollidableEntity, Cannon, Vector2D, Triangle2D) {
     "use strict";
 
     Player.inherits([CollidableEntity]);
@@ -18,13 +19,17 @@ define("Player", [
         }
 
         this.lives = 3;
+        this._canRespawn = false;
 
         this._weapon = new Cannon();
         this._fireLock = false;
-
         this._enginePower = 700;
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
+
+        this._respawnTimer = new EventTimer(1000, function () {
+            this._canRespawn = true;
+        }.bind(this));
     }
 
     Player.INIT_MASS = 300;
@@ -38,9 +43,14 @@ define("Player", [
             this._updatePosition(dt);
             this._weapon.update(dt);
         } else {
-            // wait
-            if (game.entityManager.isRespawnClear()) {
-                this._respawn();
+            this._respawnTimer.wait(dt);
+
+            if (this._canRespawn && game.entityManager.isRespawnClear()) {
+                if (this.lives > 0) {
+                    this._respawn();
+                } else {
+                    // game.over();
+                }
             }
         }
     };
@@ -52,27 +62,29 @@ define("Player", [
     };
 
     Player.prototype.processInput = function (dt) {
-        var input = game.input;
+        if (!this.getDestroyed()) {
+            var input = game.input;
 
-        if (input.pressed("A") || input.pressed("left")) {
-            this.rotate(this._compute_dTheta(-1, dt));
-        }
-
-        if (input.pressed("D") || input.pressed("right")) {
-            this.rotate(this._compute_dTheta(1, dt));
-        }
-
-        if (input.pressed("W") || input.pressed("up")) {
-            this.thrust();
-        }
-
-        if (input.pressed("space")) {
-            if (!this._weapon.getFireLock() || !this._fireLock) {
-                this.shoot(dt);
-                this._fireLock = !this._fireLock;
+            if (input.pressed("A") || input.pressed("left")) {
+                this.rotate(this._compute_dTheta(-1, dt));
             }
-        } else {
-            this._fireLock = false;
+
+            if (input.pressed("D") || input.pressed("right")) {
+                this.rotate(this._compute_dTheta(1, dt));
+            }
+
+            if (input.pressed("W") || input.pressed("up")) {
+                this.thrust();
+            }
+
+            if (input.pressed("space")) {
+                if (!this._weapon.getFireLock() || !this._fireLock) {
+                    this.shoot(dt);
+                    this._fireLock = !this._fireLock;
+                }
+            } else {
+                this._fireLock = false;
+            }
         }
     };
 
@@ -89,6 +101,17 @@ define("Player", [
 
         this._theta = resulting_theta;
         this._dir.setComponents(-Math.cos(resulting_theta), -Math.sin(resulting_theta));
+
+        this._sprite.rotate(theta, this.getPos());
+    };
+
+    Player.prototype.rotateTo = function (theta) {
+        var diff_theta = Math.abs(theta - this._theta);
+
+        diff_theta *= (theta < this._theta) ? 1 : -1;
+
+        this._theta = theta;
+        this._dir.setComponents(-Math.cos(theta), -Math.sin(theta));
 
         this._sprite.rotate(theta, this.getPos());
     };
@@ -146,11 +169,22 @@ define("Player", [
     };
 
     Player.prototype._respawn = function () {
+        var respawnPoint = new Vector2D(canvas.width / 2, canvas.height / 2);
+
         this.setDestroyed(false);
-
-        this.setPos(new Vector2D(canvas.width / 2, canvas.height / 2));
-
+        this._canRespawn = false;
         this.lives--;
+
+        this.setPos(respawnPoint);
+        this._velocity.setComponents(0, 0);
+        this._acceleration.setComponents(0, 0);
+        this._forces.setComponents(0, 0);
+
+        this.rotateTo(Math.PI / 2);
+
+        // this is a TEMP fix
+        // an issue with rotateTo method not properly rotating the player sprite correctly
+        this._sprite = new Triangle2D(this._pos.x, this._pos.y, this._width, this._height);
     };
 
     return Player;

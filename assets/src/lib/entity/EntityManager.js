@@ -104,27 +104,33 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
 
                 var gravForce = new Vector2D(0, 0);
 
+                if (projectile.getDestroyed()) {
+                    continue loop1;
+                }
+
                 for (var j = 0; j < this._asteroids.length; j++) {
                     var asteroid = this._asteroids[j];
 
-                    if (!projectile.getDestroyed() && projectile.intersects(asteroid)) {
-                        // inc shooter's score
-                        shooter.addScore(asteroid.getScoreValue());
+                    if (!asteroid.getDestroyed()) {
+                        if (projectile.intersects(asteroid)) {
+                            // inc shooter's score
+                            shooter.addScore(asteroid.getScoreValue());
 
-                        this._destroyAsteroid(asteroid, projectile);
+                            this._destroyAsteroid(asteroid, projectile);
 
-                        projectile.destroy();
-                        Library.removeArrayElem(this._projectiles, projectile);
-                        projectile = null;
+                            projectile.destroy();
+                            Library.removeArrayElem(this._projectiles, projectile);
+                            projectile = null;
 
-                        continue loop1;
-                    }
+                            continue loop1;
+                        }
 
-                    if (PHYSICS_LEVEL > 0) {
-                        var force = projectile.getGravityForce(asteroid);
-                        gravForce = gravForce.add(force);
+                        if (PHYSICS_LEVEL > 0) {
+                            var force = projectile.getGravityForce(asteroid);
+                            gravForce = gravForce.add(force);
 
-                        asteroid.applyForce(asteroid.getGravityForce(projectile));
+                            asteroid.applyForce(asteroid.getGravityForce(projectile));
+                        }
                     }
                 }
 
@@ -133,7 +139,7 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 for (var j = 0; j < this._players.length; j++) {
                     var player = this._players[j];
 
-                    if (player !== shooter && projectile.intersects(player)) {
+                    if (!player.getDestroyed() && player != shooter && projectile.intersects(player)) {
                         // inc shooter's score
                         shooter.addScore(player.getScoreValue());
 
@@ -149,7 +155,7 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 for (var j = 0; j < this._enemies.length; j++) {
                     var enemy = this._enemies[j];
 
-                    if (enemy !== shooter && projectile.intersects(enemy)) {
+                    if (!enemy.getDestroyed() && enemy != shooter && projectile.intersects(enemy)) {
                         // inc shooter's score
                         shooter.addScore(enemy.getScoreValue());
 
@@ -171,20 +177,21 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 for (var j = 0; j < this._asteroids.length; j++) {
                     var asteroid = this._asteroids[j];
 
-                    if (player.intersects(asteroid)) {
-                        player.destroy();
+                    if (!asteroid.getDestroyed() && !player.getDestroyed()) {
+                        if (player.intersects(asteroid)) {
+                            player.destroy();
 
-                        this._destroyAsteroid(asteroid, player);
-                        //asteroid = null;
+                            this._destroyAsteroid(asteroid, player);
 
-                        continue loop2;
-                    }
+                            continue loop2;
+                        }
 
-                    if (PHYSICS_LEVEL > 0) {
-                        var forceOnPlayer = player.getGravityForce(asteroid);
-                        gravforceOnPlayer = gravforceOnPlayer.add(forceOnPlayer);
+                        if (PHYSICS_LEVEL > 0) {
+                            var forceOnPlayer = player.getGravityForce(asteroid);
+                            gravforceOnPlayer = gravforceOnPlayer.add(forceOnPlayer);
 
-                        asteroid.applyForce(asteroid.getGravityForce(player).scale(PHYSICS_LEVEL));
+                            asteroid.applyForce(asteroid.getGravityForce(player).scale(PHYSICS_LEVEL));
+                        }
                     }
                 }
 
@@ -229,7 +236,7 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 respawn = {
                     x: canvas.width / 2,
                     y: canvas.height / 2,
-                    r: 150
+                    r: 75
                 };
 
             for (var i = 0; i < this._asteroids.length; i++) {
