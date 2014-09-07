@@ -1,6 +1,11 @@
 /*global define, game, canvas, ctx*/
 
-define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
+define("EntityManager", [
+    "Library",
+    "Vector2D",
+    "Asteroid",
+    "Player"
+], function (Library, Vector2D, Asteroid, Player) {
     "use strict";
 
     function EntityManager() {
@@ -17,15 +22,27 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
     EntityManager.prototype = {
         constructor: EntityManager,
 
+        /**
+         * Detects collisions across all CollidableEntities
+         * in the game. Entitys' destroy method is called
+         * on intersection of entities.
+         *
+         * Also links gravity interactions between objects
+         *
+         * I am not sure if I'm interating too much in this
+         * method. This is possible going to be the most
+         * expensive function to call in the game and making
+         * it performant would be ideal, even if the number
+         * of game objects is relatively lower than other
+         * games.
+         */
         processInput: function (dt) {
             this._players.forEach(function (player) {
                 player.processInput(dt);
             });
         },
 
-        update: function (dt) {
-            this._processInteractions(dt);
-
+        updateEntities: function (dt) {
             this._projectiles.forEach(function (projectile) {
                 if (projectile.getDistanceTraveled() < projectile.getMaxDistance()) {
                     projectile.update(dt);
@@ -81,131 +98,118 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
             this._projectiles.push(projectile);
         },
 
-        /**
-         * Detects collisions across all CollidableEntities
-         * in the game. Entitys' destroy method is called
-         * on intersection of entities.
-         *
-         * Also links gravity interactions between objects
-         *
-         * I am not sure if I'm interating too much in this
-         * method. This is possible going to be the most
-         * expensive function to call in the game and making
-         * it performant would be ideal, even if the number
-         * of game objects is relatively lower than other
-         * games.
-         */
-        _processInteractions: function () {
-            var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
-            // find interactions with projectiles
-            loop1: for (var i = 0; i < this._projectiles.length; i++) {
+        processInteractions: function () {
+            this._processProjectileInteractions();
+            this._processPlayerInteractions();
+            this._processEnemyInteractions();
+        },
+
+        _processProjectileInteractions: function () {
+            var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
+                entities = this.getEntities();
+
+            parentLoop: for (var i = 0; i < this._projectiles.length; i++) {
                 var projectile = this._projectiles[i],
                     shooter = projectile.getShooter();
 
                 var gravForce = new Vector2D(0, 0);
 
                 if (projectile.getDestroyed()) {
-                    continue loop1;
+                    Library.removeArrayElem(this._projectiles, projectile);
+                    continue;
                 }
 
-                for (var j = 0; j < this._asteroids.length; j++) {
-                    var asteroid = this._asteroids[j];
+                for (var j = 0; j < entities.length; j++) {
+                    var entity = entities[j];
 
-                    if (!asteroid.getDestroyed()) {
-                        if (projectile.intersects(asteroid)) {
+                    if (!entity.getDestroyed()) {
+                        if (shooter != entity && projectile.intersects(entity)) {
                             // inc shooter's score
-                            shooter.addScore(asteroid.getScoreValue());
+                            shooter.addScore(entity.getScoreValue());
 
-                            this._destroyAsteroid(asteroid, projectile);
+                            if (entity instanceof Asteroid) {
+                                this._destroyAsteroid(entity, projectile);
+                            } else {
+                                entity.destroy();
+                            }
 
                             projectile.destroy();
                             Library.removeArrayElem(this._projectiles, projectile);
-                            projectile = null;
 
-                            continue loop1;
+                            continue parentLoop;
                         }
 
                         if (PHYSICS_LEVEL > 0) {
-                            var force = projectile.getGravityForce(asteroid);
+                            var force = projectile.getGravityForce(entity);
+                            // accumlate gravity from entity
                             gravForce = gravForce.add(force);
 
-                            asteroid.applyForce(asteroid.getGravityForce(projectile));
+                            // apply gravity from projectile
+                            entity.applyForce(entity.getGravityForce(projectile));
                         }
                     }
                 }
 
                 projectile.applyForce(gravForce.scale(0.03));
-
-                for (var j = 0; j < this._players.length; j++) {
-                    var player = this._players[j];
-
-                    if (!player.getDestroyed() && player != shooter && projectile.intersects(player)) {
-                        // inc shooter's score
-                        shooter.addScore(player.getScoreValue());
-
-                        projectile.destroy();
-                        Library.removeArrayElem(this._projectiles, projectile);
-
-                        player.destroy();
-
-                        continue loop1;
-                    }
-                }
-
-                for (var j = 0; j < this._enemies.length; j++) {
-                    var enemy = this._enemies[j];
-
-                    if (!enemy.getDestroyed() && enemy != shooter && projectile.intersects(enemy)) {
-                        // inc shooter's score
-                        shooter.addScore(enemy.getScoreValue());
-
-                        enemy.destroy();
-
-                        projectile.destroy();
-                        Library.removeArrayElem(this._projectiles, projectile);
-
-                        continue loop1;
-                    }
-                }
             }
+        },
 
-            // interactions with players
-            for (var i = 0; i < this._players.length; i++) {
+        _processPlayerInteractions: function () {
+            var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
+                entities = this._asteroids.concat(this._enemies);
+
+            parentLoop: for (var i = 0; i < this._players.length; i++) {
                 var player = this._players[i],
-                    gravforceOnPlayer = new Vector2D(0, 0);
+                    gravforce = new Vector2D(0, 0);
 
-                for (var j = 0; j < this._asteroids.length; j++) {
-                    var asteroid = this._asteroids[j];
+                for (var j = 0; j < entities.length; j++) {
+                    var entity = entities[j];
 
-                    if (!asteroid.getDestroyed() && !player.getDestroyed()) {
-                        if (player.intersects(asteroid)) {
+                    if (!entity.getDestroyed() && !player.getDestroyed()) {
+                        if (player.intersects(entity)) {
                             player.destroy();
 
-                            this._destroyAsteroid(asteroid, player);
+                            if (entity instanceof Asteroid) {
+                                this._destroyAsteroid(entity, player);
+                            } else {
+                                entity.destroy();
+                            }
 
                             continue;
                         }
 
                         if (PHYSICS_LEVEL > 0) {
-                            var forceOnPlayer = player.getGravityForce(asteroid);
-                            gravforceOnPlayer = gravforceOnPlayer.add(forceOnPlayer);
+                            var force = player.getGravityForce(entity);
+                            gravforce = gravforce.add(force);
 
-                            asteroid.applyForce(asteroid.getGravityForce(player).scale(PHYSICS_LEVEL));
+                            entity.applyForce(entity.getGravityForce(player).scale(PHYSICS_LEVEL));
                         }
                     }
                 }
 
-                player.applyForce(gravforceOnPlayer.scale(PHYSICS_LEVEL));
+                player.applyForce(gravforce.scale(PHYSICS_LEVEL));
             }
+        },
+
+        _processEnemyInteractions: function () {
+            var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
+                entities = this._asteroids.concat(this._players);
 
             for (var i = 0; i < this._enemies.length; i++) {
                 var enemy = this._enemies[i];
 
-                for (var j = 0; j < this._players.length; j++) {
-                    var player = this._players[j];
+                for (var j = 0; j < entities.length; j++) {
+                    var entity = entities[j];
 
-                    if (enemy.intersects(player)) {
-                        player.destroy();
+                    if (!entity.getDestroyed() && !enemy.getDestroyed()) {
+                        if (enemy.intersects(entity)) {
+                            if (entity instanceof Player) {
+                                entity.destroy();
+                            } else if (entity instanceof Asteroid) {
+                                enemy.destroy();
+                                this._destroyAsteroid(entity, enemy);
+                            }
+                        }
                     }
                 }
 
@@ -248,6 +252,16 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
             }
 
             return clear;
+        },
+
+        getEntities: function () {
+            var entities = [];
+
+            entities = entities.concat(this._asteroids);
+            entities = entities.concat(this._players);
+            entities = entities.concat(this._enemies);
+
+            return entities;
         },
 
         getAsteroids: function () {
