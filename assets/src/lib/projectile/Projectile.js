@@ -24,13 +24,6 @@ define("Projectile", [
         this._distanceTraveled = new Vector2D(0, 0);
 
         this._active = false;
-
-        this._bounds = {
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height
-        };
     }
 
     // Override CollidableEntity.intersects
@@ -41,21 +34,13 @@ define("Projectile", [
     };
 
     Projectile.prototype.update = function (dt) {
-        this._wrapAroundBounds(this._bounds);
-
-        //console.debug(this._acceleration.toString());
-        this._velocity = this._velocity.add(this._acceleration);
-
-        this._pos = this._pos.add(this._velocity);
-
-        this._distanceTraveled = this._distanceTraveled.add(this._velocity);
-
-        this._acceleration.setComponents(0, 0);
+        this._updatePosition(dt);
+        this._distanceTraveled = this._distanceTraveled.add(this.getVelocity().scale(dt));
     };
 
     Projectile.prototype.propel = function (force, dir, dt) {
-        this._acceleration = new Vector2D(force.x / this._mass, force.y / this._mass);
-        this._velocity = this._velocity.add(this._acceleration.scale(dt));
+        this._acceleration = new Vector2D(force.x / this.getMass(), force.y / this.getMass());
+        this._velocity = this.getVelocity().add(this.getAcceleration());
 
         this._active = true;
         this._acceleration.setComponents(0, 0);

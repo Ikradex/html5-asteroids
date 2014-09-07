@@ -149,6 +149,12 @@ define("Player", [
 
     // Override Entity._updatePosition
     Player.prototype._updatePosition = function (dt) {
+        var newPos = this._checkOutOfBounds();
+
+        if (newPos.x != this.getPos().x || newPos.y != this.getPos().y) {
+            this._handleOutOfBounds(newPos);
+        }
+
         this._pos = this._pos.add(this._velocity);
         this._sprite.move(this._velocity);
 
@@ -160,8 +166,6 @@ define("Player", [
         // reset acceleration and forces
         this._acceleration.setComponents(0, 0);
         this._forces.setComponents(0, 0);
-
-        this._wrapAroundBounds();
     };
 
     // Override CollidableEntity.destroy

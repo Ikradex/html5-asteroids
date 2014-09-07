@@ -82,6 +82,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             this._pos = pos;
         },
 
+        setVelocity: function (velocity) {
+            this._velocity = velocity;
+        },
+
         setMass: function (mass) {
             this._mass = mass;
         },
@@ -105,7 +109,7 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
         applyForce: function (force) {
             this._forces = this._forces.add(force);
-            this._acceleration = this._acceleration.add(this._compute_dAcceleration(this._forces));
+            this._acceleration = this._acceleration.add(this._compute_dAcceleration(this.getForces()));
         },
 
         _compute_dTheta: function (dir, dt) {
@@ -122,19 +126,25 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         },
 
         _compute_dAcceleration: function (force) {
-            return new Vector2D(force.x / this._mass, force.y / this._mass); // a = f / m
+            return new Vector2D(force.x / this.getMass(), force.y / this.getMass()); // a = f / m
         },
 
         _updatePosition: function (dt) {
-            this._velocity = this._velocity.add(this._acceleration);
+            var newPos = this._checkOutOfBounds();
 
-            this._pos = this._pos.add(this._velocity.scale(dt));
+            if (newPos.x != this.getPos().x || newPos.y != this.getPos().y) {
+                this._handleOutOfBounds(newPos);
+            }
+
+            this._velocity = this.getVelocity().add(this.getAcceleration());
+
+            this._pos = this.getPos().add(this.getVelocity().scale(dt));
 
             this._acceleration.setComponents(0, 0);
             this._forces.setComponents(0, 0);
         },
 
-        _wrapAroundBounds: function () {
+        _checkOutOfBounds: function () {
             var width = (this._width !== "undefined") ? this._width : 0,
                 height = (this._height !== "undefined") ? this._height : 0;
 
@@ -156,9 +166,11 @@ define("Entity", ["Vector2D"], function (Vector2D) {
                 newPos.y = this._bounds.y - height;
             }
 
-            if (newPos.x != this._pos.x || newPos.y != this._pos.y) {
-                this.setPos(newPos);
-            }
+            return newPos;
+        },
+
+        _handleOutOfBounds: function (correctedPos) {
+            this.setPos(correctedPos);
         }
     };
 

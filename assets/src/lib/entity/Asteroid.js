@@ -33,7 +33,6 @@ define("Asteroid", [
 
     Asteroid.prototype.update = function (dt) {
         this._updatePosition(dt);
-        this._wrapAroundBounds();
     };
 
     Asteroid.prototype.render = function () {
