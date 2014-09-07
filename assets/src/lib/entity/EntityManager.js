@@ -169,8 +169,8 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 }
             }
 
-            // interactions with asteroids
-            loop2: for (var i = 0; i < this._players.length; i++) {
+            // interactions with players
+            for (var i = 0; i < this._players.length; i++) {
                 var player = this._players[i],
                     gravforceOnPlayer = new Vector2D(0, 0);
 
@@ -183,7 +183,7 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
 
                             this._destroyAsteroid(asteroid, player);
 
-                            continue loop2;
+                            continue;
                         }
 
                         if (PHYSICS_LEVEL > 0) {
@@ -198,18 +198,16 @@ define("EntityManager", ["Library", "Vector2D"], function (Library, Vector2D) {
                 player.applyForce(gravforceOnPlayer.scale(PHYSICS_LEVEL));
             }
 
-            loop3: for (var i = 0; i < this._enemies.length; i++) {
-                var enemy = this._enemies[i];
-
-                if (player.intersects(enemy)) {
-                    // enemies are not affected by colliding players
-                    // however players are killed instantly
-                    player.destroy();
-                }
-            }
-
             for (var i = 0; i < this._enemies.length; i++) {
                 var enemy = this._enemies[i];
+
+                for (var j = 0; j < this._players.length; j++) {
+                    var player = this._players[j];
+
+                    if (enemy.intersects(player)) {
+                        player.destroy();
+                    }
+                }
 
                 for (var j = 0; j < this._asteroids.length; j++) {
                     var asteroid = this._asteroids[j];
