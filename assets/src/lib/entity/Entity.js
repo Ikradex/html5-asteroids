@@ -65,6 +65,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             };
         },
 
+        getBounds: function () {
+            return this._bounds;
+        },
+
         getScore: function () {
             return this._score;
         },
@@ -95,6 +99,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             this._height = h;
         },
 
+        setBounds: function (bounds) {
+            this._bounds = bounds;
+        },
+
         setScore: function (score) {
             this._score = score;
         },
@@ -108,8 +116,8 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         },
 
         applyForce: function (force) {
-            this._forces = this._forces.add(force);
-            this._acceleration = this._acceleration.add(this._compute_dAcceleration(this.getForces()));
+            this._forces = this.getForces().add(force);
+            this._acceleration = this.getAcceleration().add(this._compute_dAcceleration(this.getForces()));
         },
 
         _compute_dTheta: function (dir, dt) {
@@ -140,30 +148,31 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
             this._pos = this.getPos().add(this.getVelocity().scale(dt));
 
-            this._acceleration.setComponents(0, 0);
-            this._forces.setComponents(0, 0);
+            this.getAcceleration().setComponents(0, 0);
+            this.getForces().setComponents(0, 0);
         },
 
         _checkOutOfBounds: function () {
-            var width = (this._width !== "undefined") ? this._width : 0,
-                height = (this._height !== "undefined") ? this._height : 0;
+            var width = (this.getDimensions().width !== "undefined") ? this.getDimensions().width : 0,
+                height = (this.getDimensions().height !== "undefined") ? this.getDimensions().height : 0;
 
-            var newPos = this._pos.clone();
+            var newPos = this.getPos().clone(),
+                bounds = this.getBounds();
 
-            if (newPos.x < this._bounds.x - width) {
-                newPos.x = (this._bounds.x + this._bounds.width) + width;
+            if (newPos.x < bounds.x - width) {
+                newPos.x = (bounds.x + bounds.width) + width;
             }
 
-            if (newPos.x > (this._bounds.x + this._bounds.width) + width) {
-                newPos.x = this._bounds.x - width;
+            if (newPos.x > (bounds.x + bounds.width) + width) {
+                newPos.x = bounds.x - width;
             }
 
-            if (newPos.y < this._bounds.y - height) {
-                newPos.y = (this._bounds.y + this._bounds.height) + height;
+            if (newPos.y < bounds.y - height) {
+                newPos.y = (bounds.y + bounds.height) + height;
             }
 
-            if (newPos.y > (this._bounds.y + this._bounds.height) + height) {
-                newPos.y = this._bounds.y - height;
+            if (newPos.y > (bounds.y + bounds.height) + height) {
+                newPos.y = bounds.y - height;
             }
 
             return newPos;
