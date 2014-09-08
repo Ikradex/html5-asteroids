@@ -44,8 +44,12 @@ define("EntityManager", [
 
         updateEntities: function (dt) {
             this._projectiles.forEach(function (projectile) {
-                if (projectile.getDistanceTraveled() < projectile.getMaxDistance()) {
-                    projectile.update(dt);
+                if (!projectile.getDestroyed()) {
+                    if (projectile.getDistanceTraveled() < projectile.getMaxDistance()) {
+                        projectile.update(dt);
+                    } else {
+                        Library.removeArrayElem(this._projectiles, projectile);
+                    }
                 } else {
                     Library.removeArrayElem(this._projectiles, projectile);
                 }
@@ -56,8 +60,12 @@ define("EntityManager", [
             });
 
             this._enemies.forEach(function (enemy) {
-                enemy.update(dt);
-            });
+                if (!enemy.getDestroyed()) {
+                    enemy.update(dt);
+                } else {
+                    Library.removeArrayElem(this._enemies, enemy);
+                }
+            }.bind(this));
 
             this._players.forEach(function (player) {
                 player.update(dt);
@@ -114,16 +122,11 @@ define("EntityManager", [
 
                 var gravForce = new Vector2D(0, 0);
 
-                if (projectile.getDestroyed()) {
-                    Library.removeArrayElem(this._projectiles, projectile);
-                    continue;
-                }
-
                 for (var j = 0; j < entities.length; j++) {
                     var entity = entities[j];
 
-                    if (!entity.getDestroyed()) {
-                        if (shooter != entity && projectile.intersects(entity)) {
+                    if (!entity.getDestroyed() && shooter != entity) {
+                        if (projectile.intersects(entity)) {
                             // inc shooter's score
                             shooter.addScore(entity.getScoreValue());
 
@@ -150,7 +153,7 @@ define("EntityManager", [
                     }
                 }
 
-                projectile.applyForce(gravForce.scale(0.03));
+                projectile.applyForce(gravForce.scale(PHYSICS_LEVEL * 10));
             }
         },
 
@@ -207,20 +210,13 @@ define("EntityManager", [
                                 entity.destroy();
                             } else if (entity instanceof Asteroid) {
                                 enemy.destroy();
+                                Library.removeArrayElem(this._enemies, enemy);
+
                                 this._destroyAsteroid(entity, enemy);
                             }
                         }
                     }
                 }
-
-                for (var j = 0; j < this._asteroids.length; j++) {
-                    var asteroid = this._asteroids[j];
-
-                    if (enemy.intersects(asteroid)) {
-                        enemy.destroy();
-                        this._destroyAsteroid(asteroid);
-                    }
-                };
             }
         },
 
