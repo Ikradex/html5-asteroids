@@ -4,8 +4,9 @@ define("EntityManager", [
     "Library",
     "Vector2D",
     "Asteroid",
-    "Player"
-], function (Library, Vector2D, Asteroid, Player) {
+    "Player",
+    "Enemy"
+], function (Library, Vector2D, Asteroid, Player, Enemy) {
     "use strict";
 
     function EntityManager() {
@@ -174,6 +175,8 @@ define("EntityManager", [
 
                             if (entity instanceof Asteroid) {
                                 this._destroyAsteroid(entity, player);
+                            } else if (entity instanceof Enemy) {
+                                player.destroy();
                             } else {
                                 entity.destroy();
                             }
@@ -196,7 +199,7 @@ define("EntityManager", [
 
         _processEnemyInteractions: function () {
             var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
-                entities = this._asteroids.concat(this._players);
+                entities = this._asteroids;
 
             for (var i = 0; i < this._enemies.length; i++) {
                 var enemy = this._enemies[i];
@@ -206,14 +209,11 @@ define("EntityManager", [
 
                     if (!entity.getDestroyed() && !enemy.getDestroyed()) {
                         if (enemy.intersects(entity)) {
-                            if (entity instanceof Player) {
-                                entity.destroy();
-                            } else if (entity instanceof Asteroid) {
-                                enemy.destroy();
-                                Library.removeArrayElem(this._enemies, enemy);
 
-                                this._destroyAsteroid(entity, enemy);
-                            }
+                            enemy.destroy();
+                            Library.removeArrayElem(this._enemies, enemy);
+
+                            this._destroyAsteroid(entity, enemy);
                         }
                     }
                 }
