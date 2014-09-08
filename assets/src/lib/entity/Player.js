@@ -23,11 +23,11 @@ define("Player", [
 
         this._weapon = new Cannon();
         this._fireLock = false;
-        this._enginePower = 700;
+        this._enginePower = 400;
 
         this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
 
-        this._respawnTimer = new EventTimer(2000, function () {
+        this._respawnTimer = new EventTimer(Player.RESPAWN_INTERVAL, function () {
             this._canRespawn = true;
         }.bind(this));
     }
@@ -35,6 +35,7 @@ define("Player", [
     Player.INIT_MASS = 300;
     Player.SCORE_VALUE = 1000;
     Player.MAX_LIVES = 4;
+    Player.RESPAWN_INTERVAL = 3000;
 
     /* Public */
 
@@ -155,17 +156,17 @@ define("Player", [
             this._handleOutOfBounds(newPos);
         }
 
-        this._pos = this._pos.add(this._velocity);
-        this._sprite.move(this._velocity);
+        this._pos = this.getPos().add(this.getVelocity().scale(dt));
+        this._sprite.move(this.getVelocity());
 
-        this._velocity = this._velocity.add(this._compute_dVelocity(this._acceleration, dt));
+        this._velocity = this.getVelocity().add(this._compute_dVelocity(this.getAcceleration(), dt));
 
         // add friction (I know, I know, space, but game-mechanics)
-        this._velocity = this._velocity.scale(0.99);
+        this._velocity = this.getVelocity().scale(0.99);
 
         // reset acceleration and forces
-        this._acceleration.setComponents(0, 0);
-        this._forces.setComponents(0, 0);
+        this.getAcceleration().setComponents(0, 0);
+        this.getForces().setComponents(0, 0);
     };
 
     // Override CollidableEntity.destroy

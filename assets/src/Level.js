@@ -4,9 +4,10 @@ define([
     "Library",
     "Vector2D",
     "Player",
+    "Saucer",
     "Asteroid",
     "EventTimer"
-], function (Library, Vector2D, Player, Asteroid, EventTimer) {
+], function (Library, Vector2D, Player, Saucer, Asteroid, EventTimer) {
     "use strict";
 
     function Level(levelNum) {
@@ -35,7 +36,8 @@ define([
         constructor: Level,
 
         update: function (dt) {
-            game.entityManager.update(dt);
+            game.entityManager.processInteractions();
+            game.entityManager.updateEntities(dt);
 
             if (this.over()) {
                 this.resetTimer.wait(dt)
@@ -59,10 +61,14 @@ define([
             for (var i = 0; i < asteroidsToSpawn; i++) {
                 this._spawnAsteroid();
             }
+
+            this._spawnEnemy();
         },
 
         over: function () {
-            return (game.entityManager.getAsteroids().length <= 0);
+            var numEntities = game.entityManager.getAsteroids().length + game.entityManager.getEnemies();
+
+            return (numEntities == 0);
         },
 
         _spawnPlayer: function () {
@@ -70,6 +76,24 @@ define([
                 player = new Player(spawnPos.x, spawnPos.y, 14, 24);
 
             game.entityManager.addPlayer(player);
+        },
+
+        _spawnEnemy: function () {
+            var spawnPosX = 0,
+                spawnPosY = Library.randomInteger(0, canvas.height);
+
+            var xVel = Saucer.X_VELOCITY,
+                yVel = 0;
+
+            if (Library.randomBoolean()) {
+                spawnPosX = canvas.width;
+                xVel *= -1;
+            }
+
+            var enemy = new Saucer(spawnPosX, spawnPosY, 24, 24, 200);
+            enemy.setVelocity(new Vector2D(xVel, yVel));
+
+            game.entityManager.addEnemy(enemy);
         },
 
         _spawnAsteroid: function () {

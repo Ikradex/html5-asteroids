@@ -90,6 +90,14 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             this._velocity = velocity;
         },
 
+        setAcceleration: function (acceleration) {
+            this._acceleration = acceleration;
+        },
+
+        setForces: function (forces) {
+            this._forces = forces;
+        },
+
         setMass: function (mass) {
             this._mass = mass;
         },

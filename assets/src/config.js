@@ -20,6 +20,8 @@ requirejs.config({
         'CollidableEntity': 'assets/src/lib/entity/CollidableEntity',
         'EntityManager': 'assets/src/lib/entity/EntityManager',
         'Player': 'assets/src/lib/entity/Player',
+        'Enemy': 'assets/src/lib/entity/Enemy',
+        'Saucer': 'assets/src/lib/entity/Saucer',
         'Asteroid': 'assets/src/lib/entity/Asteroid',
         'EventTimer': 'assets/src/lib/util/EventTimer',
         'Projectile': 'assets/src/lib/projectile/Projectile',

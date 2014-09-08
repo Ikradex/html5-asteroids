@@ -22,7 +22,7 @@ define("Enemy", [
         }
     };
 
-    Enemy.prototype.shoot = function () {
+    Enemy.prototype.shoot = function (dt) {
         this._weapon.fire(this, this.getPos().x, this.getPos().y, this.getVelocity(), this._dir, dt);
     };
 
