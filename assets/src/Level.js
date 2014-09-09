@@ -19,7 +19,7 @@ define([
 
         this.start();
 
-        this._spawnPlayer();
+        //this._spawnPlayer();
 
         this.resetTimer = new EventTimer(Level.RESET_INTERVAL, function () {
             this.start();
@@ -59,7 +59,7 @@ define([
                 Level.MIN_ASTEROIDS + this.getLevelNum() : Level.MAX_ASTEROIDS;
 
             for (var i = 0; i < asteroidsToSpawn; i++) {
-                this._spawnAsteroid();
+                //this._spawnAsteroid();
             }
 
             this._spawnEnemy();
