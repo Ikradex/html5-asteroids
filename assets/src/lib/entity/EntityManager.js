@@ -74,16 +74,16 @@ define("EntityManager", [
         },
 
         render: function () {
+            this._projectiles.forEach(function (projectile) {
+                projectile.render();
+            });
+
             this._players.forEach(function (player) {
                 player.render();
             });
 
             this._enemies.forEach(function (enemy) {
                 enemy.render();
-            });
-
-            this._projectiles.forEach(function (projectile) {
-                projectile.render();
             });
 
             this._asteroids.forEach(function (asteroid) {
