@@ -5,9 +5,10 @@ define([
     "Vector2D",
     "Player",
     "Saucer",
+    "BabySaucer",
     "Asteroid",
     "EventTimer"
-], function (Library, Vector2D, Player, Saucer, Asteroid, EventTimer) {
+], function (Library, Vector2D, Player, Saucer, BabySaucer, Asteroid, EventTimer) {
     "use strict";
 
     function Level(levelNum) {
@@ -59,7 +60,7 @@ define([
                 Level.MIN_ASTEROIDS + this.getLevelNum() : Level.MAX_ASTEROIDS;
 
             for (var i = 0; i < asteroidsToSpawn; i++) {
-                this._spawnAsteroid();
+                //this._spawnAsteroid();
             }
 
             this._spawnEnemy();
@@ -90,7 +91,11 @@ define([
                 xVel *= -1;
             }
 
-            var enemy = new Saucer(spawnPosX, spawnPosY, 24, 24, 200);
+            /*var enemy = Library.randomBoolean() ?
+                new Saucer(spawnPosX, spawnPosY, 24, 24, 200) :
+                new BabySaucer(spawnPosX, spawnPosY, 16, 16, 500);*/
+
+            var enemy = new BabySaucer(spawnPosX, spawnPosY, 16, 16, 500);
             enemy.setVelocity(new Vector2D(xVel, yVel));
 
             game.entityManager.addEnemy(enemy);

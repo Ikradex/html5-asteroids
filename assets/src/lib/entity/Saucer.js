@@ -23,19 +23,29 @@ define("Saucer", [
         var cannon = new Cannon();
         this.setWeapon(cannon);
 
-        this._fireTimer = new EventTimer(this._getFireInterval(), function () {
+        this._enginePower = 2000;
+
+        this._shiftYLength = this._getShiftYLength();
+
+        this._fireTimer = new EventTimer(this._getBehaviorInterval(), function () {
             this.shoot(this._dt);
-            this._fireTimer.setWaitTime(this._getFireInterval());
+            this._fireTimer.setWaitTime(this._getBehaviorInterval());
+        }.bind(this));
+
+        this._shiftYTimer = new EventTimer(this._getBehaviorInterval(), function () {
+            this._shiftY();
+            this._shiftYLength = this._getShiftYLength();
         }.bind(this));
     }
 
     Saucer.X_VELOCITY = 75;
-    Saucer.MIN_FIRE_INTERVAL = 500;
-    Saucer.MAX_FIRE_INTERVAL = 2000;
+    Saucer.MIN_BEHAVIOR_INTERVAL = 500;
+    Saucer.MAX_BEHAVIOR_INTERVAL = 2000;
     Saucer.INIT_MASS = 400;
 
     Saucer.prototype.update = function (dt) {
         this._fireTimer.wait(dt);
+        this._shiftYTimer.wait(dt);
         this._updatePosition(dt);
         this._weapon.update(dt);
 
@@ -52,14 +62,30 @@ define("Saucer", [
         ctx.restore();
     };
 
+    Saucer.prototype._shiftY = function () {
+        var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
+            ang = 90 * Library.randomBoolean() ? 1 : -1,
+            dir = new Vector2D(0, -Math.sin(ang)).scale(10);
+
+        if (PHYSICS_LEVEL > 0) {
+            this.applyForce(dir.scale(this._enginePower));
+        } else {
+            //this._velocity.y = 150 * (Library.randomBoolean() ? 1 : -1);
+        }
+    };
+
+    Saucer.prototype._getShiftYLength = function () {
+        return 100;
+    };
+
     // Override Enemy.shoot
     Saucer.prototype.shoot = function (dt) {
         this._dir = this._aim();
         this._weapon.fire(this, this.getPos().x, this.getPos().y, this.getVelocity(), this._dir, dt);
     };
 
-    Saucer.prototype._getFireInterval = function () {
-        return Library.randomInteger(Saucer.MIN_FIRE_INTERVAL, Saucer.MAX_FIRE_INTERVAL);
+    Saucer.prototype._getBehaviorInterval = function () {
+        return Library.randomInteger(Saucer.MIN_BEHAVIOR_INTERVAL, Saucer.MAX_BEHAVIOR_INTERVAL);
     };
 
     Saucer.prototype._randomDir = function () {
