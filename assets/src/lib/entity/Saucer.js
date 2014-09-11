@@ -35,6 +35,7 @@ define("Saucer", [
         this._shiftYTimer = new EventTimer(this._getBehaviorInterval(), function () {
             this._shiftY();
             this._shiftYLength = this._getShiftYLength();
+            this._shiftYTimer.setWaitTime(this._getBehaviorInterval());
         }.bind(this));
     }
 
@@ -90,7 +91,6 @@ define("Saucer", [
 
     Saucer.prototype._randomDir = function () {
         var randAngle = Library.randomInteger(-180, 180);
-
         return new Vector2D(-Math.cos(randAngle), -Math.sin(randAngle));
     };
 

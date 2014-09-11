@@ -20,7 +20,7 @@ define([
 
         this.start();
 
-        this._spawnPlayer();
+        //this._spawnPlayer();
 
         this.resetTimer = new EventTimer(Level.RESET_INTERVAL, function () {
             this.start();
