@@ -20,7 +20,7 @@ define("Bullet", ["Projectile"], function (Projectile) {
 
         ctx.fillStyle = "#FFF";
         ctx.beginPath();
-        ctx.arc(this._pos.x, this._pos.y, this.getDimensions().width, 0, 2 * Math.PI, false);
+        ctx.arc(this.getPos().x, this.getPos().y, this.getDimensions().width, 0, 2 * Math.PI, false);
         ctx.stroke();
         ctx.fill();
 
