@@ -1,8 +1,10 @@
 /*global define, canvas, ctx*/
 
 define("Enemy", [
-    "CollidableEntity"
-], function (CollidableEntity) {
+    "CollidableEntity",
+    "Vector2D",
+    "Library"
+], function (CollidableEntity, Vector2D, Library) {
     "use strict";
 
     Enemy.inherits([CollidableEntity]);
@@ -13,6 +15,8 @@ define("Enemy", [
         if (!(this instanceof Enemy)) {
             throw new TypeError("Enemy constructor cannot be called as a function.");
         }
+
+        this._accuracy = 0.1;
     }
 
     Enemy.prototype.update = function (dt) {
@@ -20,6 +24,50 @@ define("Enemy", [
             this._updatePosition(dt);
             this._weapon.update(dt);
         }
+    };
+
+    Enemy.prototype.getNearestEntity = function (entities) {
+        var index = -1,
+            max = 0;
+
+        // select closest player
+        for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+
+            if (entity.getDestroyed()) {
+                continue;
+            }
+
+            var distance = this.getPos().distanceTo(entity.getPos());
+
+            if (distance > max) {
+                index = i;
+                max = distance;
+            }
+        }
+
+        return (index >= 0) ? entities[index] : null;
+    };
+
+    Enemy.prototype.aim = function (entity) {
+        var predictedPos, predictedAngle;
+
+        if (entity !== null) {
+            var relativeVelocity = entity.getVelocity().add(this.getVelocity().scale(0.5));
+
+            predictedPos = entity.getPos().add(relativeVelocity);
+            predictedAngle = this.getPos().angleTo(predictedPos);
+
+            // add inaccuracies
+            var inaccuracy = predictedAngle - (predictedAngle * this.getAccuracy());
+            predictedAngle += Library.toRadians(Library.randomInteger(-inaccuracy, inaccuracy));
+        } else {
+            // default to random aiming if no entity to aim at
+            predictedAngle = Library.randomInteger(-180, 180);
+        }
+
+        // return the direction the Saucer will need to face
+        return new Vector2D(Math.cos(predictedAngle), Math.sin(predictedAngle));
     };
 
     Enemy.prototype.shoot = function (dt) {
@@ -30,8 +78,16 @@ define("Enemy", [
         return this._weapon;
     };
 
+    Enemy.prototype.getAccuracy = function () {
+        return this._accuracy;
+    };
+
     Enemy.prototype.setWeapon = function (weapon) {
         this._weapon = weapon;
+    };
+
+    Enemy.prototype.setAccuracy = function (accuracy) {
+        this._accuracy = accuracy;
     };
 
     return Enemy;
