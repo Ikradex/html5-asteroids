@@ -74,6 +74,10 @@ define("Vector2D", [], function () {
             return Math.atan2(v.y - this.y, v.x - this.x);
         },
 
+        angleBetween: function (v) {
+            return Math.atan2(this.y, this.x) - Math.atan2(v.y, v.x);
+        },
+
         magnitude: function () {
             return Math.sqrt((this.x * this.x) + (this.y * this.y));
         },
@@ -82,7 +86,7 @@ define("Vector2D", [], function () {
             var xd = v.x - this.x,
                 yd = v.y - this.y;
 
-            return Math.sqrt(xd * xd + yd * yd);
+            return Math.abs(Math.sqrt(xd * xd + yd * yd));
         },
 
         setComponents: function (x, y) {
