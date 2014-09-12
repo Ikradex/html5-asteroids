@@ -97,8 +97,12 @@ define("Saucer", [
     };
 
     // Override Entity._handleOutOfBounds
-    Saucer.prototype._handleOutOfBounds = function () {
-        this.destroy();
+    Saucer.prototype._handleOutOfBounds = function (correctedPos) {
+        if (correctedPos.x != this.getPos().x) {
+            this.destroy();
+        } else if (correctedPos.y != this.getPos.y) {
+            this.setPos(correctedPos);
+        }
     };
 
     return Saucer;

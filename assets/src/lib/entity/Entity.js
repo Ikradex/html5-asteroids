@@ -148,9 +148,7 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         _updatePosition: function (dt) {
             var newPos = this._checkOutOfBounds();
 
-            if (newPos.x != this.getPos().x || newPos.y != this.getPos().y) {
-                this._handleOutOfBounds(newPos);
-            }
+            this._handleOutOfBounds(newPos);
 
             this._velocity = this.getVelocity().add(this.getAcceleration());
 
@@ -187,7 +185,9 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         },
 
         _handleOutOfBounds: function (correctedPos) {
-            this.setPos(correctedPos);
+            if (correctedPos.x != this.getPos().x || correctedPos.y != this.getPos().y) {
+                this.setPos(correctedPos);
+            }
         }
     };
 
