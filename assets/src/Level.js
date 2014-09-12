@@ -22,7 +22,12 @@ define([
 
         this._spawnPlayer();
 
-        this.resetTimer = new EventTimer(Level.RESET_INTERVAL, function () {
+        this._spawnTimer = new EventTimer(this._getSpawnInterval(), function () {
+            this._spawnEnemy();
+            this._spawnTimer.setWaitTime(this._getSpawnInterval());
+        }.bind(this));
+
+        this._resetTimer = new EventTimer(Level.RESET_INTERVAL, function () {
             this.start();
         }.bind(this));
     }
@@ -32,6 +37,8 @@ define([
     Level.ASTEROID_INIT_MASS = 1000;
     Level.ASTEROID_INIT_SCORE_VALUE = 50;
     Level.RESET_INTERVAL = 1000;
+    Level.MIN_SPAWN_INTERVAL = 5000;
+    Level.MAX_SPAWN_INTERVAL = 25000;
 
     Level.prototype = {
         constructor: Level,
@@ -41,7 +48,9 @@ define([
             game.entityManager.updateEntities(dt);
 
             if (this.over()) {
-                this.resetTimer.wait(dt)
+                this._resetTimer.wait(dt)
+            } else {
+                this._spawnTimer.wait(dt);
             }
         },
 
@@ -60,16 +69,20 @@ define([
                 Level.MIN_ASTEROIDS + this.getLevelNum() : Level.MAX_ASTEROIDS;
 
             for (var i = 0; i < asteroidsToSpawn; i++) {
-                //this._spawnAsteroid();
+                this._spawnAsteroid();
             }
 
-            this._spawnEnemy();
+            //this._spawnEnemy();
         },
 
         over: function () {
             var numEntities = game.entityManager.getAsteroids().length + game.entityManager.getEnemies();
 
             return (numEntities == 0);
+        },
+
+        _getSpawnInterval: function () {
+            return Library.randomInteger(Level.MIN_SPAWN_INTERVAL, Level.MAX_SPAWN_INTERVAL);
         },
 
         _spawnPlayer: function () {
@@ -91,11 +104,10 @@ define([
                 xVel *= -1;
             }
 
-            /*var enemy = Library.randomBoolean() ?
-                new Saucer(spawnPosX, spawnPosY, 24, 24, 200) :
-                new BabySaucer(spawnPosX, spawnPosY, 16, 16, 500);*/
+            var enemy = Library.randomBoolean() ?
+                new Saucer(spawnPosX, spawnPosY, 36, 24, 200) :
+                new BabySaucer(spawnPosX, spawnPosY, 20, 12, 500);
 
-            var enemy = new BabySaucer(spawnPosX, spawnPosY, 16, 16, 500);
             enemy.setVelocity(new Vector2D(xVel, yVel));
 
             game.entityManager.addEnemy(enemy);
