@@ -46,6 +46,8 @@ define("Loader", ['soundManager',
         imgs["asteroid_" + i] = loader.addImage(url, "asteroid_" + i);
     }
 
+    imgs["saucer"] = loader.addImage(baseImgUrl + "saucer.png");
+
     imgs["ship"] = loader.addImage(baseImgUrl + "ship.png");
     imgs["ship_motion"] = loader.addImage(baseImgUrl + "ship_motion.png");
 

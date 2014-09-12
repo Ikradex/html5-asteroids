@@ -19,7 +19,7 @@ define("BabySaucer", [
         // this.setDestroySound("snd_destroy_hi");
     }
 
-    BabySaucer.SCORE_VALUE = 500;
+    BabySaucer.SCORE_VALUE = 1000;
 
     // Override Enemy.shoot
     BabySaucer.prototype.shoot = function (dt) {
