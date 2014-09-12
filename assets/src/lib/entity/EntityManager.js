@@ -46,7 +46,7 @@ define("EntityManager", [
         updateEntities: function (dt) {
             this._projectiles.forEach(function (projectile) {
                 if (!projectile.getDestroyed()) {
-                    if (projectile.getDistanceTraveled() < projectile.getMaxDistance()) {
+                    if (projectile.getTravelDistance() < projectile.getMaxTravelDistance()) {
                         projectile.update(dt);
                     } else {
                         Library.removeArrayElem(this._projectiles, projectile);
