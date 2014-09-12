@@ -21,6 +21,7 @@ define("Saucer", [
         this._dt = 0.016; // store the value of dt for automated shooting
 
         var cannon = new Cannon();
+        cannon.setProjectileMaxTravelDistance(Saucer.BULLET_TRAVEL_DISTANCE);
         this.setWeapon(cannon);
 
         this._enginePower = 2000;
@@ -40,9 +41,10 @@ define("Saucer", [
     }
 
     Saucer.X_VELOCITY = 75;
+    Saucer.INIT_MASS = 400;
     Saucer.MIN_BEHAVIOR_INTERVAL = 500;
     Saucer.MAX_BEHAVIOR_INTERVAL = 2000;
-    Saucer.INIT_MASS = 400;
+    Saucer.BULLET_TRAVEL_DISTANCE = canvas.width / 4;
 
     Saucer.prototype.update = function (dt) {
         this._fireTimer.wait(dt);
