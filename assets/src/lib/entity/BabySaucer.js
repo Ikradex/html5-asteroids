@@ -11,7 +11,6 @@ define("BabySaucer", [
 
     function BabySaucer(x, y, width, height, scoreValue) {
         Saucer.apply(this, [x, y, width, height, scoreValue]);
-
         if (!(this instanceof BabySaucer)) {
             throw new TypeError("BabySaucer constructor cannot be called as a function.");
         }
