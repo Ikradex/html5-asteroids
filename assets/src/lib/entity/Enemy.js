@@ -53,7 +53,7 @@ define("Enemy", [
         var predictedPos, predictedAngle;
 
         if (entity !== null) {
-            var relativeVelocity = entity.getVelocity().add(this.getVelocity().scale(0.5));
+            var relativeVelocity = entity.getVelocity().sub(this.getVelocity().scale(0.5));
 
             predictedPos = entity.getPos().add(relativeVelocity);
             predictedAngle = this.getPos().angleTo(predictedPos);
