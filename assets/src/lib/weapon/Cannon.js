@@ -1,6 +1,10 @@
 /*global define*/
 
-define("Cannon", ["Weapon", "Bullet"], function (Weapon, Bullet) {
+define("Cannon", [
+    "Vector2D",
+    "Weapon",
+    "Bullet"
+], function (Vector2D, Weapon, Bullet) {
     "use strict";
 
     Cannon.inherits([Weapon]);
@@ -14,6 +18,11 @@ define("Cannon", ["Weapon", "Bullet"], function (Weapon, Bullet) {
 
         this._power = 850;
         this._heatRate = 50;
+
+        var corner = new Vector2D(0, 0),
+            center = new Vector2D(canvas.width / 2, canvas.height / 2);
+
+        this.setProjectileMaxTravelDistance(center.distanceTo(corner) * 0.75);
     }
 
     Cannon.prototype.update = function (dt) {
@@ -25,8 +34,10 @@ define("Cannon", ["Weapon", "Bullet"], function (Weapon, Bullet) {
     };
 
     Cannon.prototype.fire = function (shooter, x, y, velocity, dir, dt) {
-        var bullet = new Bullet(shooter, x, y, velocity),
-            force = this._propelProjectile(bullet, dir, dt);
+        var bullet = new Bullet(shooter, x, y, velocity);
+        bullet.setMaxTravelDistance(this.getProjectileMaxTravelDistance());
+
+        var force = this._propelProjectile(bullet, dir, dt);
 
         return force;
     };

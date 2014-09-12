@@ -3,7 +3,7 @@
 define("Weapon", [], function () {
     "use strict";
 
-    function Weapon() {
+    function Weapon(projectileTravelDistance) {
         if (!(this instanceof Weapon)) {
             throw new TypeError("Weapon constructor cannot be called as a function.");
         }
@@ -12,6 +12,10 @@ define("Weapon", [], function () {
         this._cooldown = 0;
         this._heatRate = 75;
         this._fireLock = true;
+
+        this._projectileMaxTravelDistance = (projectileTravelDistance !== null ||
+            typeof projectileTravelDistance == "undefined") ?
+            projectileTravelDistance : 0;
     }
 
     Weapon.prototype = {
@@ -27,6 +31,14 @@ define("Weapon", [], function () {
 
         getFireLock: function () {
             return this._fireLock;
+        },
+
+        getProjectileMaxTravelDistance: function () {
+            return this._projectileMaxTravelDistance;
+        },
+
+        setProjectileMaxTravelDistance: function (distance) {
+            this._projectileMaxTravelDistance = distance;
         },
 
         _propelProjectile: function (projectile, dir, dt) {
