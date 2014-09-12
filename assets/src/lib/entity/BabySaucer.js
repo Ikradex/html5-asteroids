@@ -22,7 +22,7 @@ define("BabySaucer", [
     BabySaucer.SCORE_VALUE = 500;
 
     // Override Enemy.shoot
-    Saucer.prototype.shoot = function (dt) {
+    BabySaucer.prototype.shoot = function (dt) {
         var closestPlayer = this.getNearestEntity(game.entityManager.getPlayers());
 
         this._dir = this.aim(closestPlayer);

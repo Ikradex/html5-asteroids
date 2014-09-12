@@ -22,6 +22,7 @@ requirejs.config({
         'Player': 'assets/src/lib/entity/Player',
         'Enemy': 'assets/src/lib/entity/Enemy',
         'Saucer': 'assets/src/lib/entity/Saucer',
+        'BabySaucer': 'assets/src/lib/entity/BabySaucer',
         'Asteroid': 'assets/src/lib/entity/Asteroid',
         'EventTimer': 'assets/src/lib/util/EventTimer',
         'Projectile': 'assets/src/lib/projectile/Projectile',

@@ -21,7 +21,12 @@ define("Projectile", [
         this._originPos = new Vector2D(x, y);
         this._velocity = (velocity !== "undefined" || velocity !== null) ? velocity : new Vector2D(0, 0);
 
-        this._distanceTraveled = new Vector2D(0, 0);
+        this._travelDistance = new Vector2D(0, 0);
+
+        var corner = new Vector2D(0, 0),
+            center = new Vector2D(canvas.width / 2, canvas.height / 2);
+
+        this._maxDistance = center.distanceTo(corner) * 0.75;
 
         this._active = false;
     }
@@ -35,7 +40,7 @@ define("Projectile", [
 
     Projectile.prototype.update = function (dt) {
         this._updatePosition(dt);
-        this._distanceTraveled = this._distanceTraveled.add(this.getVelocity().scale(dt));
+        this._travelDistance = this._travelDistance.add(this.getVelocity().scale(dt));
     };
 
     Projectile.prototype.propel = function (force, dir, dt) {
@@ -54,17 +59,16 @@ define("Projectile", [
         this._shooter = shooter;
     };
 
-    Projectile.prototype.getDistanceTraveled = function () {
-        return this._distanceTraveled.magnitude();
+    Projectile.prototype.getTravelDistance = function () {
+        return this._travelDistance.magnitude();
     };
 
-    Projectile.prototype.getMaxDistance = function () {
-        var corner = new Vector2D(0, 0),
-            center = new Vector2D(canvas.width / 2, canvas.height / 2);
+    Projectile.prototype.getMaxTravelDistance = function () {
+        return this._maxDistance;
+    };
 
-        var distance = center.distanceTo(corner);
-
-        return distance * 0.75;
+    Projectile.prototype.setMaxTravelDistance = function (distance) {
+        this._maxDistance = distance;
     };
 
     return Projectile;
