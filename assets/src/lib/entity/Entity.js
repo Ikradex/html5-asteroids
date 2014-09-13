@@ -65,6 +65,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             };
         },
 
+        getDir: function () {
+            return this._dir;
+        },
+
         getBounds: function () {
             return this._bounds;
         },
@@ -105,6 +109,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         setDimensions: function (w, h) {
             this._width = w;
             this._height = h;
+        },
+
+        setDir: function (dir) {
+            this._dir = dir;
         },
 
         setBounds: function (bounds) {
