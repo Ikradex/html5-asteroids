@@ -22,7 +22,7 @@ define("Enemy", [
     Enemy.prototype.update = function (dt) {
         if (!this.getDestroyed()) {
             this._updatePosition(dt);
-            this._weapon.update(dt);
+            this.getWeapon().update(dt);
         }
     };
 
@@ -52,7 +52,7 @@ define("Enemy", [
     Enemy.prototype.aim = function (entity) {
         var predictedPos, predictedAngle;
 
-        if (entity !== null) {
+        if (!typeof entity == "undefined" && entity != null) {
             var relativeVelocity = entity.getVelocity().sub(this.getVelocity().scale(0.5));
 
             predictedPos = entity.getPos().add(relativeVelocity);
@@ -71,7 +71,7 @@ define("Enemy", [
     };
 
     Enemy.prototype.shoot = function (dt) {
-        this._weapon.fire(this, this.getPos().x, this.getPos().y, this.getVelocity(), this._dir, dt);
+        this.getWeapon().fire(this, this.getPos().x, this.getPos().y, this.getVelocity(), this.getDir(), dt);
     };
 
     Enemy.prototype.getWeapon = function () {
