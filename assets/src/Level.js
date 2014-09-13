@@ -71,8 +71,6 @@ define([
             for (var i = 0; i < asteroidsToSpawn; i++) {
                 this._spawnAsteroid();
             }
-
-            //this._spawnEnemy();
         },
 
         over: function () {
