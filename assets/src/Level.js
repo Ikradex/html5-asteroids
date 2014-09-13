@@ -85,7 +85,7 @@ define([
 
         _spawnPlayer: function () {
             var spawnPos = this.getPlayerSpawnPos(),
-                player = new Player(spawnPos.x, spawnPos.y, 14, 24);
+                player = new Player(spawnPos.x, spawnPos.y, 19, 34);
 
             game.entityManager.addPlayer(player);
         },

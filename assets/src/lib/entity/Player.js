@@ -5,8 +5,8 @@ define("Player", [
     "CollidableEntity",
     "Cannon",
     "Vector2D",
-    "Triangle2D"
-], function (EventTimer, CollidableEntity, Cannon, Vector2D, Triangle2D) {
+    "Library"
+], function (EventTimer, CollidableEntity, Cannon, Vector2D, Library) {
     "use strict";
 
     Player.inherits([CollidableEntity]);
@@ -25,11 +25,11 @@ define("Player", [
         this._fireLock = false;
         this._enginePower = 400;
 
-        this._sprite = new Triangle2D(this._pos.x, this._pos.y, width, height);
-
         this._respawnTimer = new EventTimer(Player.RESPAWN_INTERVAL, function () {
             this._canRespawn = true;
         }.bind(this));
+
+        this._img = imgs["ship"];
     }
 
     Player.INIT_MASS = 300;
@@ -58,8 +58,16 @@ define("Player", [
 
     Player.prototype.render = function () {
         if (!this.getDestroyed()) {
-            this._sprite.render();
+            ctx.save();
+            ctx.translate(this.getPos().x, this.getPos().y);
+            ctx.rotate(this._theta - Math.PI / 2);
+            ctx.drawImage(this._img, -(this._width / 2), -(this._height / 2), this.getDimensions().width, this.getDimensions().height);
+            ctx.restore();
         }
+    };
+
+    Player.prototype._getWeaponPos = function () {
+        return Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
     };
 
     Player.prototype.processInput = function (dt) {
@@ -76,6 +84,8 @@ define("Player", [
 
             if (input.pressed("W") || input.pressed("up")) {
                 this.thrust();
+            } else {
+                this._img = imgs["ship"];
             }
 
             if (input.pressed("space")) {
@@ -102,8 +112,6 @@ define("Player", [
 
         this._theta = resulting_theta;
         this._dir.setComponents(-Math.cos(resulting_theta), -Math.sin(resulting_theta));
-
-        this._sprite.rotate(theta, this.getPos());
     };
 
     Player.prototype.rotateTo = function (theta) {
@@ -113,13 +121,13 @@ define("Player", [
 
         this._theta = theta;
         this._dir.setComponents(-Math.cos(theta), -Math.sin(theta));
-
-        this._sprite.rotate(theta, this.getPos());
     };
 
     Player.prototype.thrust = function () {
         var thrustForce = this._dir.scale(this._enginePower);
         this.applyForce(thrustForce);
+
+        this._img = imgs["ship_motion"];
     };
 
     Player.prototype.shoot = function (dt) {
@@ -128,25 +136,12 @@ define("Player", [
         var velocity = this._velocity.clone(),
             dir = this._dir.clone();
 
-        var opposingForce = this._weapon.fire(this, this._sprite.getTop().x, this._sprite.getTop().y, velocity, dir, dt);
+        var opposingForce = this._weapon.fire(this, this._getWeaponPos().x, this._getWeaponPos().y, velocity, dir, dt);
 
         if (PHYSICS_LEVEL > 0) {
             this.applyForce(opposingForce.scale(PHYSICS_LEVEL));
         }
     };
-
-    // Override Entity.setPos
-    Player.prototype.setPos = function (pos) {
-        this._pos = pos;
-        this._sprite.set(pos);
-    };
-
-    // Override Entity.getPos
-    Player.prototype.getPos = function () {
-        return this._sprite.center();
-    };
-
-    /* Private */
 
     // Override Entity._updatePosition
     Player.prototype._updatePosition = function (dt) {
@@ -157,7 +152,6 @@ define("Player", [
         }
 
         this._pos = this.getPos().add(this.getVelocity().scale(dt));
-        this._sprite.move(this.getVelocity());
 
         this._velocity = this.getVelocity().add(this._compute_dVelocity(this.getAcceleration(), dt));
 
@@ -187,10 +181,6 @@ define("Player", [
         this._forces.setComponents(0, 0);
 
         this.rotateTo(Math.PI / 2);
-
-        // this is a TEMP fix
-        // an issue with rotateTo method not properly rotating the player sprite correctly
-        this._sprite = new Triangle2D(this._pos.x, this._pos.y, this._width, this._height);
     };
 
     return Player;
