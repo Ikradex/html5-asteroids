@@ -26,6 +26,8 @@ define("Player", [
         this._fireLock = false;
         this._enginePower = 400;
 
+        this._dTheta = 3.5;
+
         this._respawnTimer = new EventTimer(Player.RESPAWN_INTERVAL, function () {
             this._canRespawn = true;
         }.bind(this));
