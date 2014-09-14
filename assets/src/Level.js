@@ -23,8 +23,10 @@ define([
         this._spawnPlayer();
 
         this._spawnTimer = new EventTimer(this._getSpawnInterval(), function () {
-            this._spawnEnemy();
-            this._spawnTimer.setWaitTime(this._getSpawnInterval());
+            if (game.entityManager.getEnemies().length == 0) {
+                this._spawnEnemy();
+                this._spawnTimer.setWaitTime(this._getSpawnInterval());
+            }
         }.bind(this));
 
         this._resetTimer = new EventTimer(Level.RESET_INTERVAL, function () {
