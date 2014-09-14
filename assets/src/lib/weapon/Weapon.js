@@ -1,12 +1,16 @@
 /*global define, game*/
 
-define("Weapon", [], function () {
+define("Weapon", [
+    "Vector2D"
+], function (Vector2D) {
     "use strict";
 
-    function Weapon(projectileTravelDistance) {
+    function Weapon(x, y, projectileTravelDistance) {
         if (!(this instanceof Weapon)) {
             throw new TypeError("Weapon constructor cannot be called as a function.");
         }
+
+        this._pos = new Vector2D(x, y);
 
         this._power = 1000;
         this._cooldown = 0;
@@ -29,12 +33,24 @@ define("Weapon", [], function () {
             }
         },
 
+        rotate: function (theta, origin) {
+            this.setPos(this.getPos().rotate(theta, origin));
+        },
+
+        getPos: function () {
+            return this._pos;
+        },
+
         getFireLock: function () {
             return this._fireLock;
         },
 
         getProjectileMaxTravelDistance: function () {
             return this._projectileMaxTravelDistance;
+        },
+
+        setPos: function (pos) {
+            this._pos = pos;
         },
 
         setProjectileMaxTravelDistance: function (distance) {

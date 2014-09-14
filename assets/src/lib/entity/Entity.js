@@ -132,8 +132,8 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         },
 
         applyForce: function (force) {
-            this._forces = this.getForces().add(force);
-            this._acceleration = this.getAcceleration().add(this._compute_dAcceleration(this.getForces()));
+            this.setForces(this.getForces().add(force));
+            this.setAcceleration(this.getAcceleration().add(this._compute_dAcceleration(this.getForces())));
         },
 
         _compute_dTheta: function (dir, dt) {
@@ -158,9 +158,13 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
             this._handleOutOfBounds(newPos);
 
-            this._velocity = this.getVelocity().add(this.getAcceleration());
+            this.setVelocity(this.getVelocity().add(this.getAcceleration()));
 
-            this._pos = this.getPos().add(this.getVelocity().scale(dt));
+            this.setPos(this.getPos().add(this.getVelocity().scale(dt)));
+
+            if (this._weapon != null && typeof this._weapon !== "undefined") {
+                this.getWeapon().setPos(newPos);
+            }
 
             this.getAcceleration().setComponents(0, 0);
             this.getForces().setComponents(0, 0);

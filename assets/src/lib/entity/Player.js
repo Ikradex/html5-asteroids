@@ -21,7 +21,8 @@ define("Player", [
         this.lives = 3;
         this._canRespawn = false;
 
-        this._weapon = new Cannon();
+        var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
+        this._weapon = new Cannon(weaponPos.x, weaponPos.y);
         this._fireLock = false;
         this._enginePower = 400;
 
@@ -32,9 +33,9 @@ define("Player", [
         this._img = imgs["ship"];
     }
 
+    Player.MAX_LIVES = 4;
     Player.INIT_MASS = 300;
     Player.SCORE_VALUE = 1000;
-    Player.MAX_LIVES = 4;
     Player.RESPAWN_INTERVAL = 3000;
 
     /* Public */
@@ -64,10 +65,6 @@ define("Player", [
             ctx.drawImage(this._img, -(this._width / 2), -(this._height / 2), this.getDimensions().width, this.getDimensions().height);
             ctx.restore();
         }
-    };
-
-    Player.prototype._getWeaponPos = function () {
-        return Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
     };
 
     Player.prototype.processInput = function (dt) {
@@ -112,6 +109,8 @@ define("Player", [
 
         this._theta = resulting_theta;
         this._dir.setComponents(-Math.cos(resulting_theta), -Math.sin(resulting_theta));
+
+        this._weapon.rotate(theta - Math.PI, this.getPos());
     };
 
     Player.prototype.rotateTo = function (theta) {
@@ -124,7 +123,7 @@ define("Player", [
     };
 
     Player.prototype.thrust = function () {
-        var thrustForce = this._dir.scale(this._enginePower);
+        var thrustForce = this.getDir().scale(this._enginePower);
         this.applyForce(thrustForce);
 
         this._img = imgs["ship_motion"];
@@ -133,10 +132,7 @@ define("Player", [
     Player.prototype.shoot = function (dt) {
         var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
 
-        var velocity = this._velocity.clone(),
-            dir = this._dir.clone();
-
-        var opposingForce = this._weapon.fire(this, this._getWeaponPos().x, this._getWeaponPos().y, velocity, dir, dt);
+        var opposingForce = this._weapon.fire(this, this.getVelocity(), this.getDir(), dt);
 
         if (PHYSICS_LEVEL > 0) {
             this.applyForce(opposingForce.scale(PHYSICS_LEVEL));
@@ -145,18 +141,14 @@ define("Player", [
 
     // Override Entity._updatePosition
     Player.prototype._updatePosition = function (dt) {
-        var newPos = this._checkOutOfBounds();
-
-        if (newPos.x != this.getPos().x || newPos.y != this.getPos().y) {
-            this._handleOutOfBounds(newPos);
-        }
-
-        this._pos = this.getPos().add(this.getVelocity().scale(dt));
-
-        this._velocity = this.getVelocity().add(this._compute_dVelocity(this.getAcceleration(), dt));
-
+        this._handleOutOfBounds(this._checkOutOfBounds());
+        this.setPos(this.getPos().add(this.getVelocity().scale(dt)));
+        this.setVelocity(this.getVelocity().add(this.getAcceleration()));
         // add friction (I know, I know, space, but game-mechanics)
-        this._velocity = this.getVelocity().scale(0.99);
+        this.setVelocity(this.getVelocity().scale(0.99));
+
+        var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
+        this._weapon.setPos(new Vector2D(weaponPos.x, weaponPos.y));
 
         // reset acceleration and forces
         this.getAcceleration().setComponents(0, 0);
