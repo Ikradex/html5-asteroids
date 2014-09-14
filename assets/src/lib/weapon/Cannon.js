@@ -9,8 +9,8 @@ define("Cannon", [
 
     Cannon.inherits([Weapon]);
 
-    function Cannon() {
-        Weapon.apply(this, arguments);
+    function Cannon(x, y) {
+        Weapon.apply(this, [x, y]);
 
         if (!(this instanceof Cannon)) {
             throw new TypeError("Cannon constructor cannot be called as a function.");
@@ -33,8 +33,8 @@ define("Cannon", [
         }
     };
 
-    Cannon.prototype.fire = function (shooter, x, y, velocity, dir, dt) {
-        var bullet = new Bullet(shooter, x, y, velocity);
+    Cannon.prototype.fire = function (shooter, velocity, dir, dt) {
+        var bullet = new Bullet(shooter, this.getPos().x, this.getPos().y, velocity);
         bullet.setMaxTravelDistance(this.getProjectileMaxTravelDistance());
 
         var force = this._propelProjectile(bullet, dir, dt);
