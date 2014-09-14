@@ -25,8 +25,8 @@ define("BabySaucer", [
     BabySaucer.prototype.shoot = function (dt) {
         var closestPlayer = this.getNearestEntity(game.entityManager.getPlayers());
 
-        this._dir = this.aim(closestPlayer);
-        this._weapon.fire(this, this.getPos().x, this.getPos().y, this.getVelocity(), this._dir, dt);
+        this.setDir(this.aim(closestPlayer));
+        this.getWeapon().fire(this, this.getVelocity(), this.getDir(), dt);
     };
 
     return BabySaucer;

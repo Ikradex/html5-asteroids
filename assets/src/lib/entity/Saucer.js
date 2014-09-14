@@ -20,7 +20,7 @@ define("Saucer", [
 
         this._dt = 0.016; // store the value of dt for automated shooting
 
-        var cannon = new Cannon();
+        var cannon = new Cannon(x, y);
         cannon.setProjectileMaxTravelDistance(Saucer.BULLET_TRAVEL_DISTANCE);
         this.setWeapon(cannon);
 
@@ -59,15 +59,7 @@ define("Saucer", [
 
     Saucer.prototype.render = function () {
         ctx.save();
-        /*ctx.fillStyle = "#F00";
-        ctx.beginPath();
-        ctx.arc(this.getPos().x, this.getPos().y, this.getDimensions().width / 2, 0, 2 * Math.PI, false);
-        ctx.stroke();
-        ctx.fill();*/
-        ctx.save();
         ctx.drawImage(this._img, this._pos.x - this._width / 2, this._pos.y - this._height / 2, this._width, this._height);
-        ctx.fillStyle = "#FFF";
-        ctx.restore();
         ctx.restore();
     };
 
@@ -89,8 +81,8 @@ define("Saucer", [
 
     // Override Enemy.shoot
     Saucer.prototype.shoot = function (dt) {
-        this._dir = this.aim();
-        this._weapon.fire(this, this.getPos().x, this.getPos().y, this.getVelocity(), this._dir, dt);
+        this.setDir(this.aim());
+        this.getWeapon().fire(this, this.getVelocity(), this.getDir(), dt);
     };
 
     Saucer.prototype._getBehaviorInterval = function () {
