@@ -50,11 +50,7 @@ define("Player", [
             this._respawnTimer.wait(dt);
 
             if (this._canRespawn && game.entityManager.isRespawnClear()) {
-                if (this.lives > 0) {
-                    this._respawn();
-                } else {
-                    // game.over();
-                }
+                this._respawn();
             }
         }
     };
@@ -157,9 +153,37 @@ define("Player", [
         this.getForces().setComponents(0, 0);
     };
 
+    // Override CollidableEntity.attracts
+    Player.prototype.attracts = function (entity) {
+        var valid = true;
+
+        if (game.entityManager.isProjectile(entity)) {
+            valid = (entity.getShooter() != this);
+        }
+
+        if (valid) {
+            var force = this._getGravityForce(entity);
+
+            this.applyForce(force.scale(game.getConsts().PHYSICS_LEVEL));
+        }
+    };
+
     // Override CollidableEntity.destroy
     Player.prototype.destroy = function (entity) {
-        this.setDestroyed(true);
+        var valid = true;
+
+        if (game.entityManager.isProjectile(entity)) {
+            valid = (entity.getShooter() != this);
+        }
+
+        if (valid) {
+            this.setDestroyed(true);
+            this.lives--;
+
+            if (this.lives <= 0) {
+                game.entityManager.removePlayer(this);
+            }
+        }
     };
 
     Player.prototype._respawn = function () {
@@ -167,7 +191,6 @@ define("Player", [
 
         this.setDestroyed(false);
         this._canRespawn = false;
-        this.lives--;
 
         this.setPos(respawnPoint);
         this._velocity.setComponents(0, 0);
@@ -175,6 +198,10 @@ define("Player", [
         this._forces.setComponents(0, 0);
 
         this.rotateTo(Math.PI / 2);
+    };
+
+    Player.prototype.toString = function () {
+        return "Player (" + this.getPos().x + ", " + this.getPos().y + ")";
     };
 
     return Player;

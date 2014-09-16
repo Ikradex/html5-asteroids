@@ -27,10 +27,6 @@ define("Enemy", [
     };
 
     Enemy.prototype.getNearestEntity = function (entities) {
-        if (entities.length == 1) {
-            return entities[0];
-        }
-
         var index = -1,
             max = 0;
 

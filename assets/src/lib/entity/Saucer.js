@@ -63,6 +63,23 @@ define("Saucer", [
         ctx.restore();
     };
 
+    Saucer.prototype.destroy = function (entity) {
+        var valid = true;
+
+        if (game.entityManager.isProjectile(entity)) {
+            valid = (entity.getShooter() != this);
+        }
+
+        if (game.entityManager.isPlayer(entity)) {
+            valid = false;
+        }
+
+        if (valid) {
+            this.setDestroyed(true);
+            game.entityManager.removeEnemy(this);
+        }
+    };
+
     Saucer.prototype._shiftY = function () {
         var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
             ang = 90 * Library.randomBoolean() ? 1 : -1,
@@ -101,6 +118,26 @@ define("Saucer", [
         } else if (correctedPos.y != this.getPos.y) {
             this.setPos(correctedPos);
         }
+    };
+
+    Saucer.prototype.attracts = function (entity) {
+        var valid = true;
+
+        if (game.entityManager.isProjectile) {
+            valid = (entity.getShooter() != this);
+        }
+
+        valid = (!game.entityManager.isEnemy(entity));
+
+        if (valid) {
+            var force = this._getGravityForce(entity);
+
+            this.applyForce(force.scale(game.getConsts().PHYSICS_LEVEL));
+        }
+    };
+
+    Saucer.prototype.toString = function () {
+        return "Saucer (" + this.getPos().x + ", " + this.getPos().y + ")";
     };
 
     return Saucer;
