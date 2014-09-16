@@ -136,6 +136,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             this.setAcceleration(this.getAcceleration().add(this._compute_dAcceleration(this.getForces())));
         },
 
+        distanceTo: function (entity) {
+            return this.getPos().distanceTo(entity.getPos());
+        },
+
         _compute_dTheta: function (dir, dt) {
             return this._dTheta * dir * dt;
         },

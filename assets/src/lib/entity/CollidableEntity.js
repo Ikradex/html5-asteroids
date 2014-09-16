@@ -19,18 +19,11 @@ define("CollidableEntity", [
         this._destroyed = false;
     }
 
-    CollidableEntity.prototype.getGravityForce = function (collidableEntity) {
-        var angle = this.getPos().angleTo(collidableEntity.getPos()),
-            distance = this.getPos().distanceTo(collidableEntity.getPos()),
-            dir = new Vector2D(Math.cos(angle), Math.sin(angle));
 
-        var force = 0;
+    CollidableEntity.prototype.attracts = function (entity) {
+        var force = this._getGravityForce(entity);
 
-        if (distance <= 400) {
-            force = Library.forceOfGravity(game.getConsts().GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
-        }
-
-        return dir.scale(force);
+        this.applyForce(force);
     };
 
     CollidableEntity.prototype.getBoundingCircle = function () {
@@ -57,7 +50,21 @@ define("CollidableEntity", [
     };
 
     CollidableEntity.prototype.destroy = function () {
-        this._destroyed = true;
+        this.setDestroyed(true);
+    };
+
+    CollidableEntity.prototype._getGravityForce = function (collidableEntity) {
+        var angle = this.getPos().angleTo(collidableEntity.getPos()),
+            distance = this.getPos().distanceTo(collidableEntity.getPos()),
+            dir = new Vector2D(Math.cos(angle), Math.sin(angle));
+
+        var force = 0;
+
+        if (distance <= 400) {
+            force = Library.forceOfGravity(game.getConsts().GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
+        }
+
+        return dir.scale(force);
     };
 
     return CollidableEntity;

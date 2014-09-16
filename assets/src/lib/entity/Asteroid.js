@@ -41,35 +41,46 @@ define("Asteroid", [
         ctx.restore();
     };
 
+    // Override CollidableEntity.attracts
+    Asteroid.prototype.attracts = function (entity) {
+        var valid = true;
+
+        valid = (!game.entityManager.isAsteroid(entity));
+
+        if (valid) {
+            var force = this._getGravityForce(entity);
+
+            this.applyForce(force);
+        }
+    };
+
     // Override CollidableEntity.destroy
     Asteroid.prototype.destroy = function (entity) {
-        var children = [];
+        if (!game.entityManager.isAsteroid(entity)) {
+            this.setDestroyed(true);
 
-        if (this._stage < Asteroid.MAX_DEATH_SPAWNS) {
-            for (var i = 0; i < Asteroid.NUM_CHILD_SPAWNS; i++) {
-                // spawn a little off center
-                var newX = this._pos.x + Library.randomInteger(-8, 8),
-                    newY = this._pos.y + Library.randomInteger(-8, 8);
+            if (this._stage < Asteroid.MAX_DEATH_SPAWNS) {
+                for (var i = 0; i < Asteroid.NUM_CHILD_SPAWNS; i++) {
+                    // spawn a little off center
+                    var newX = this._pos.x + Library.randomInteger(-8, 8),
+                        newY = this._pos.y + Library.randomInteger(-8, 8);
 
-                var velFactorX = Library.randomDouble(0.8, 2),
-                    velFactorY = Library.randomDouble(0.8, 2);
+                    var velFactorX = Library.randomDouble(0.8, 2),
+                        velFactorY = Library.randomDouble(0.8, 2);
 
-                var velocity = new Vector2D(this._velocity.x * velFactorX, this._velocity.y * velFactorY);
+                    var velocity = new Vector2D(this._velocity.x * velFactorX, this._velocity.y * velFactorY),
+                        child = new Asteroid(newX, newY, this._width / 2, this._height / 2, this.getMass(), this.getScoreValue() * 2, velocity, this._stage + 1);
 
-                /*if (typeof entity !== "undefined" && entity != null) {
-                    var postXY = Library.elasticCollisionVelocities(velocity, this._mass, entity.getVelocity(), entity.getMass()),
-                        postVel = new Vector2D(postXY.x, postXY.y);
-
-                    // add the collision velocity to the child asteroid
-                    velocity = velocity.add(postVel);
-                }*/
-
-                var child = new Asteroid(newX, newY, this._width / 2, this._height / 2, this.getMass(), this.getScoreValue() * 2, velocity, this._stage + 1);
-                children.push(child);
+                    game.entityManager.addAsteroid(child);
+                }
             }
-        }
 
-        return children;
+            game.entityManager.removeAsteroid(this);
+        }
+    };
+
+    Asteroid.prototype.toString = function () {
+        return "Asteroid (" + this.getPos().x + ", " + this.getPos().y + ")";
     };
 
     return Asteroid;

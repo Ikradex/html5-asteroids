@@ -52,7 +52,7 @@ define("Enemy", [
     Enemy.prototype.aim = function (entity) {
         var predictedPos, predictedAngle;
 
-        if (!typeof entity == "undefined" && entity != null) {
+        if (typeof entity != "undefined" && entity != null) {
             var relativeVelocity = entity.getVelocity().sub(this.getVelocity().scale(0.5));
 
             predictedPos = entity.getPos().add(relativeVelocity);
@@ -62,6 +62,7 @@ define("Enemy", [
             var inaccuracy = predictedAngle - (predictedAngle * this.getAccuracy());
             predictedAngle += Library.toRadians(Library.randomInteger(-inaccuracy, inaccuracy));
         } else {
+            console.debug(entity);
             // default to random aiming if no entity to aim at
             predictedAngle = Library.randomInteger(-180, 180);
         }

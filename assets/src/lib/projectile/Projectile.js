@@ -32,11 +32,11 @@ define("Projectile", [
     }
 
     // Override CollidableEntity.intersects
-    Projectile.prototype.intersects = function (collidableEntity) {
+    /*Projectile.prototype.intersects = function (collidableEntity) {
         var c = collidableEntity.getBoundingCircle();
 
         return Library.pointIntersectsCircle(this._pos.x, this._pos.y, c.x, c.y, c.r);
-    };
+    };*/
 
     Projectile.prototype.update = function (dt) {
         this._updatePosition(dt);
@@ -69,6 +69,35 @@ define("Projectile", [
 
     Projectile.prototype.setMaxTravelDistance = function (distance) {
         this._maxDistance = distance;
+    };
+
+    // Override CollidableEntity.attracts
+    Projectile.prototype.attracts = function (entity) {
+        var valid = true;
+
+        if (game.entityManager.isPlayer(entity) || game.entityManager.isEnemy(entity)) {
+            valid = (this.getShooter() != entity);
+        }
+
+        if (valid) {
+            var force = this._getGravityForce(entity);
+
+            this.applyForce(force);
+        }
+    };
+
+    // Override CollidableEntity.destroy
+    Projectile.prototype.destroy = function (entity) {
+        var valid = true;
+
+        if (game.entityManager.isPlayer(entity) || game.entityManager.isEnemy(entity)) {
+            valid = (this.getShooter() != entity);
+        }
+
+        if (valid) {
+            this.setDestroyed(true);
+            game.entityManager.removeProjectile(this);
+        }
     };
 
     return Projectile;

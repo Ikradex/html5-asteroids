@@ -26,7 +26,7 @@ define("Build", [
     Game.DEFAULT_WIDTH = 650;
     Game.DEFAULT_HEIGHT = 450;
 
-    Game.PHYSICS_LEVEL = 0;
+    Game.PHYSICS_LEVEL = 1;
     Game.INIT_LEVEL_NUM = -1;
     Game.GRAV_CONST = 1;
     Game.DEBUG = true;
