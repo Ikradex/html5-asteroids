@@ -1,6 +1,6 @@
 /*global define, canvas, ctx*/
 
-define([], function () {
+define("Object", [], function () {
     "use strict";
 
     function Object() {
