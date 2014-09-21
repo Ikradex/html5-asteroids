@@ -47,6 +47,8 @@ define("Projectile", [
         this._acceleration = new Vector2D(force.x / this.getMass(), force.y / this.getMass());
         this._velocity = this.getVelocity().add(this.getAcceleration());
 
+        this.setDir(dir);
+
         this._active = true;
         this._acceleration.setComponents(0, 0);
     };
