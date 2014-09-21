@@ -75,6 +75,22 @@ define("Asteroid", [
                 }
             }
 
+            for (var i = 0; i < Library.randomInteger(3, 8); i++) {
+                var ang = Library.randomInteger(-180, 180),
+                    dir = new Vector2D(Math.cos(ang), Math.sin(ang));
+
+                if (game.getConsts().PHYSICS_LEVEL > -1 && this._stage < 3) {
+                    ang = this.getPos().angleTo(entity.getPos()) + Library.toRadians(Library.randomInteger(-10, 10));
+                    dir = new Vector2D(Math.cos(ang), Math.sin(ang));
+                }
+
+                var wh = Library.randomInteger(1, 3) / this._stage,
+                    mass = Library.randomDouble(5, 10) / this._stage,
+                    force = dir.scale(300);
+
+                game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
+            }
+
             game.entityManager.removeAsteroid(this);
         }
     };
