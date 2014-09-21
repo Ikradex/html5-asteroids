@@ -47,7 +47,8 @@ define([
 
         update: function (dt) {
             game.entityManager.processInteractions();
-            game.entityManager.updateEntities(dt);
+            game.entityManager.update(dt);
+            game.particleEmitter.update(dt);
 
             if (this.over()) {
                 this._resetTimer.wait(dt)
@@ -58,12 +59,14 @@ define([
 
         render: function () {
             game.entityManager.render();
+            game.particleEmitter.render();
         },
 
         start: function () {
             game.entityManager.clearEnemies();
             game.entityManager.clearAsteroids();
             game.entityManager.clearProjectiles();
+            game.particleEmitter.clearParticles();
 
             this._levelNum++;
 

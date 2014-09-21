@@ -5,8 +5,9 @@ define("Build", [
     "Library",
     "Level",
     "KeyboardState",
-    "EntityManager"
-], function (Vector2D, Library, Level, KeyboardState, EntityManager) {
+    "EntityManager",
+    "ParticleEmitter"
+], function (Vector2D, Library, Level, KeyboardState, EntityManager, ParticleEmitter) {
     "use strict";
 
     function Game() {
@@ -15,7 +16,9 @@ define("Build", [
         }
 
         this.input = new KeyboardState();
+
         this.entityManager = new EntityManager();
+        this.particleEmitter = new ParticleEmitter();
 
         this._started = false;
         this._paused = false;
@@ -26,7 +29,7 @@ define("Build", [
     Game.DEFAULT_WIDTH = 650;
     Game.DEFAULT_HEIGHT = 450;
 
-    Game.PHYSICS_LEVEL = 1;
+    Game.PHYSICS_LEVEL = 0;
     Game.INIT_LEVEL_NUM = -1;
     Game.GRAV_CONST = 1;
     Game.DEBUG = true;
@@ -68,6 +71,7 @@ define("Build", [
                 ctx.fillText("Asteroids: " + this.entityManager.getAsteroids().length, canvas.width - 100, 40);
                 ctx.fillText("Enemies: " + this.entityManager.getEnemies().length, canvas.width - 100, 60);
                 ctx.fillText("Projectiles: " + this.entityManager.getProjectiles().length, canvas.width - 100, 80);
+                ctx.fillText("Level: " + this._currentLevel.getLevelNum(), canvas.width - 100, 100);
             }
             ctx.restore();
         },
