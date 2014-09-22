@@ -46,6 +46,28 @@ require(["Loader", "Build"], function (loader, Game) {
             // for IE9
             setInterval(main, 1000 / Game.FPS);
         }
+
+        var gui = new dat.GUI();
+        var f1 = gui.addFolder('Game');
+        f1.add(game, '_started');
+        f1.add(game, '_paused');
+        f1.add(Game, 'PHYSICS_LEVEL', 0, 1);
+        f1.add(Game, 'GRAV_CONST', 0, 5);
+        f1.add(Game, 'FPS', 1, 120);
+        f1.open();
+
+        var f2 = gui.addFolder('Level');
+        f2.add(game._currentLevel, '_levelNum').listen();
+        f2.open();
+
+        var f3 = gui.addFolder('Entities');
+        f3.add(game.entityManager._players, 'length', 0, 4).name("Players").listen();
+        f3.add(game.entityManager._asteroids, 'length', 0, 48).name("Asteroids").listen();
+        f3.add(game.entityManager._enemies, 'length', 0, 2).name("Enemies").listen();
+        f3.add(game.entityManager._projectiles, 'length', 0, 30).name("Projectiles").listen();
+        f3.add(game.particleEmitter._particles, 'length', 0, 100).name("Particles").listen();
+        f3.open();
+
     });
 
     loader.start();
