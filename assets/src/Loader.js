@@ -18,10 +18,14 @@ define("Loader", ['soundManager',
         document.getElementsByTagName("body")[0].appendChild(canvas);
     }
 
+    var defaultW = 650, defaultH = 450;
+
     canvas.width = config.viewport.width;
     canvas.height = config.viewport.height;
     var ctx = canvas.getContext("2d");
 
+    window.scaleW = canvas.width / defaultW;
+    window.scaleH = canvas.height / defaultH;
     window.canvas = canvas;
     window.ctx = ctx;
 
