@@ -76,11 +76,11 @@ define("Asteroid", [
             }
 
             // emit particles
-            for (var i = 0; i < Library.randomInteger(3, 8); i++) {
+            for (var i = 0; i < Library.randomInteger(3, 8) * Game.PARTICLES; i++) {
                 var ang = Library.randomInteger(-180, 180),
                     dir = new Vector2D(Math.cos(ang), Math.sin(ang));
 
-                if (game.getConsts().PHYSICS_LEVEL > -1 && this._stage < 3) {
+                if (Game.PHYSICS_LEVEL > -1 && this._stage < 3) {
                     ang = this.getPos().angleTo(entity.getPos()) + Library.toRadians(Library.randomInteger(-10, 10));
                     dir = new Vector2D(Math.cos(ang), Math.sin(ang));
                 }

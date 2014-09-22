@@ -10,6 +10,7 @@ require(["Loader", "Build"], function (loader, Game) {
 
         var game = new Game();
         window.game = game;
+        window.Game = Game;
 
         game.start();
 
@@ -44,20 +45,21 @@ require(["Loader", "Build"], function (loader, Game) {
             animationFrame(mainLoop, canvas);
         } else {
             // for IE9
-            setInterval(main, 1000 / Game.FPS);
+            setInterval(main, 1000 / Game.MAX_FPS);
         }
 
         var gui = new dat.GUI();
         var f1 = gui.addFolder('Game');
-        f1.add(game, '_started');
-        f1.add(game, '_paused');
-        f1.add(Game, 'PHYSICS_LEVEL', 0, 1);
-        f1.add(Game, 'GRAV_CONST', 0, 5);
-        f1.add(Game, 'FPS', 1, 120);
+        f1.add(game, '_started').name("Started");
+        f1.add(game, '_paused').name("Paused");
+        f1.add(Game, 'PHYSICS_LEVEL', 0, 1).name("Physics");
+        f1.add(Game, 'GRAV_CONST', 0, 5).name("Gravity");
+        f1.add(game, 'fps', 1, Game.MAX_FPS);
         f1.open();
 
-        var f2 = gui.addFolder('Level');
-        f2.add(game._currentLevel, '_levelNum').listen();
+        var f2 = gui.addFolder('Effects');
+        f2.add(Game, 'PARTICLES', 0, 1).name("Particles");
+        f2.add(Game, 'SHADOW_BLUR', 0, 1).name("Shadows");
         f2.open();
 
         var f3 = gui.addFolder('Entities');

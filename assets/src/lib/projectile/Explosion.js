@@ -31,13 +31,15 @@ define("Explosion", [
         },
 
         render: function () {
+            ctx.save();
             ctx.fillStyle = ctx.shadowColor = "#FFF";
-            ctx.shadowBlur = 0;
+            ctx.shadowBlur = 40 * Game.SHADOW_BLUR;
 
             ctx.beginPath();
             ctx.arc(this._pos.x, this._pos.y, this._radius, 0, 2 * Math.PI, false);
             ctx.stroke();
             ctx.fill();
+            ctx.restore();
         }
     };
 

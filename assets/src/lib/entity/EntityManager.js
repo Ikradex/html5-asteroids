@@ -111,7 +111,7 @@ define("EntityManager", [
         processInteractions: function () {
             this._processCollisions();
 
-            if (game.getConsts().PHYSICS_LEVEL > 0) {
+            if (Game.PHYSICS_LEVEL > 0) {
                 this._processGravity();
             }
         },

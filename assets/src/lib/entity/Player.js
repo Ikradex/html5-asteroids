@@ -128,7 +128,7 @@ define("Player", [
     };
 
     Player.prototype.shoot = function (dt) {
-        var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
+        var PHYSICS_LEVEL = Game.PHYSICS_LEVEL;
         var opposingForce = this._weapon.fire(this, this.getVelocity(), this.getDir(), dt);
 
         if (PHYSICS_LEVEL > 0) {
@@ -162,7 +162,7 @@ define("Player", [
 
         if (valid) {
             var force = this._getGravityForce(entity);
-            this.applyForce(force.scale(game.getConsts().PHYSICS_LEVEL));
+            this.applyForce(force.scale(Game.PHYSICS_LEVEL));
         }
     };
 
@@ -179,7 +179,7 @@ define("Player", [
             this.lives--;
 
             // emit particles
-            for (var i = 0; i < Library.randomInteger(3, 8); i++) {
+            for (var i = 0; i < Library.randomInteger(3, 8) * Game.PARTICLES; i++) {
                 var ang = Library.randomInteger(-180, 180),
                     dir = new Vector2D(Math.cos(ang), Math.sin(ang));
 

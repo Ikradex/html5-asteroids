@@ -24,15 +24,22 @@ define("Build", [
         this._paused = false;
 
         this._currentLevel = null;
+
+        this.fps = Game.MAX_FPS;
     }
 
     Game.DEFAULT_WIDTH = 650;
     Game.DEFAULT_HEIGHT = 450;
 
     Game.PHYSICS_LEVEL = 0;
-    Game.INIT_LEVEL_NUM = -1;
     Game.GRAV_CONST = 1;
-    Game.FPS = 80;
+
+    Game.PARTICLES = 1;
+    Game.SHADOW_BLUR = 0.1;
+
+    Game.INIT_LEVEL_NUM = -1;
+
+    Game.MAX_FPS = 80;
 
     Game.prototype = {
         /**
@@ -50,6 +57,8 @@ define("Build", [
             if (this._currentLevel != null && this._started && !this._paused) {
                 this._currentLevel.update(dt);
             }
+
+            this.fps = Math.round((1000 / dt) / 1000);
         },
 
         render: function () {
@@ -77,15 +86,6 @@ define("Build", [
                 }
             }
             ctx.restore();
-        },
-
-        getConsts: function () {
-            return {
-                DEFAULT_WIDTH: Game.DEFAULT_WIDTH,
-                DEFAULT_HEIGHT: Game.DEFAULT_HEIGHT,
-                GRAV_CONST: Game.GRAV_CONST,
-                PHYSICS_LEVEL: Game.PHYSICS_LEVEL,
-            }
         },
 
         start: function () {

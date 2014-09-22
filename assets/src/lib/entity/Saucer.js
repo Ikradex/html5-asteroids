@@ -79,7 +79,7 @@ define("Saucer", [
 
             if (entity) {
                 // emit particles
-                for (var i = 0; i < Library.randomInteger(3, 8); i++) {
+                for (var i = 0; i < Library.randomInteger(3, 8) * Game.PARTICLES; i++) {
                     var ang = Library.randomInteger(-180, 180),
                         dir = new Vector2D(Math.cos(ang), Math.sin(ang));
 
@@ -97,7 +97,7 @@ define("Saucer", [
     };
 
     Saucer.prototype._shiftY = function () {
-        var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL,
+        var PHYSICS_LEVEL = Game.PHYSICS_LEVEL,
             ang = 90 * Library.randomBoolean() ? 1 : -1,
             dir = new Vector2D(0, -Math.sin(ang)).scale(10);
 
@@ -148,7 +148,7 @@ define("Saucer", [
         if (valid) {
             var force = this._getGravityForce(entity);
 
-            this.applyForce(force.scale(game.getConsts().PHYSICS_LEVEL));
+            this.applyForce(force.scale(Game.PHYSICS_LEVEL));
         }
     };
 

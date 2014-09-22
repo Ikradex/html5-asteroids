@@ -61,7 +61,7 @@ define("CollidableEntity", [
         var force = 0;
 
         if (distance <= 400) {
-            force = Library.forceOfGravity(game.getConsts().GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
+            force = Library.forceOfGravity(game.GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
         }
 
         return dir.scale(force);
