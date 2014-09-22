@@ -27,6 +27,7 @@ requirejs.config({
         'EventTimer': 'assets/src/lib/util/EventTimer',
         'Projectile': 'assets/src/lib/projectile/Projectile',
         'Particle': 'assets/src/lib/projectile/Particle',
+        'Explosion': 'assets/src/lib/projectile/Explosion',
         'ParticleEmitter': 'assets/src/lib/projectile/ParticleEmitter',
         'Bullet': 'assets/src/lib/projectile/Bullet',
         'Weapon': 'assets/src/lib/weapon/Weapon',
