@@ -55,17 +55,28 @@ define("Build", [
 
         render: function () {
             ctx.save();
-            ctx.font = "12px AtariChunky";
+            ctx.font = "16px AtariChunky";
             ctx.fillStyle = "#000";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "#FFF";
+            ctx.fillStyle = ctx.strokeStyle = "#FFF";
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // render level, debug etc
             this._currentLevel.render();
 
-            ctx.fillStyle = "#FFF";
-            ctx.fillText(this.entityManager.getPlayers()[0].getScore(), 20, 20);
+            var players = this.entityManager.getPlayers(),
+                scoreX = 20;
+            for(var i = 0; i < players.length; i++) {
+                var player = players[i];
+                ctx.fillText(player.getScore(), scoreX, 20);
+                scoreX += 20;
+
+                var livesX = 15;
+                for(var j = 0; j < player.lives; j++) {
+                    ctx.drawImage(imgs["ship"], livesX, 40, 15, 25);
+                    livesX += 15;
+                }
+            }
 
             if (Game.DEBUG) {
                 ctx.font = "9px Monospace";
