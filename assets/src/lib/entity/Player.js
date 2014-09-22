@@ -60,7 +60,7 @@ define("Player", [
             ctx.save();
             ctx.translate(this.getPos().x, this.getPos().y);
             ctx.rotate(this._theta - Math.PI / 2);
-            ctx.drawImage(this._img, -(this._width / 2), -(this._height / 2), this.getDimensions().width, this.getDimensions().height);
+            ctx.drawImage(this._img, -(this.getDimensions().width / 2), -(this.getDimensions().height / 2), this.getDimensions().width, this.getDimensions().height);
             ctx.restore();
         }
     };
@@ -129,7 +129,6 @@ define("Player", [
 
     Player.prototype.shoot = function (dt) {
         var PHYSICS_LEVEL = game.getConsts().PHYSICS_LEVEL;
-
         var opposingForce = this._weapon.fire(this, this.getVelocity(), this.getDir(), dt);
 
         if (PHYSICS_LEVEL > 0) {
@@ -163,7 +162,6 @@ define("Player", [
 
         if (valid) {
             var force = this._getGravityForce(entity);
-
             this.applyForce(force.scale(game.getConsts().PHYSICS_LEVEL));
         }
     };

@@ -37,7 +37,7 @@ define("Asteroid", [
 
     Asteroid.prototype.render = function () {
         ctx.save();
-        ctx.drawImage(this._img, this._pos.x - this._width / 2, this._pos.y - this._height / 2, this._width, this._height);
+        ctx.drawImage(this._img, this._pos.x - this._width / 2, this._pos.y - this._height / 2, this._width * scaleW, this._height * scaleH);
         ctx.restore();
     };
 

@@ -31,8 +31,8 @@ define("Explosion", [
         },
 
         render: function () {
-            ctx.fillStyle = "#FFF";
-            ctx.shadowBlur = 10;
+            ctx.fillStyle = ctx.shadowColor = "#FFF";
+            ctx.shadowBlur = 0;
 
             ctx.beginPath();
             ctx.arc(this._pos.x, this._pos.y, this._radius, 0, 2 * Math.PI, false);

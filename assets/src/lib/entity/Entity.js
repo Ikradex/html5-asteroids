@@ -60,8 +60,8 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
         getDimensions: function () {
             return {
-                width: this._width,
-                height: this._height
+                width: this._width * scaleW,
+                height: this._height * scaleH
             };
         },
 

@@ -59,7 +59,7 @@ define("Saucer", [
 
     Saucer.prototype.render = function () {
         ctx.save();
-        ctx.drawImage(this._img, this._pos.x - this._width / 2, this._pos.y - this._height / 2, this._width, this._height);
+        ctx.drawImage(this._img, this.getPos().x - this.getDimensions().width / 2, this.getPos().y - this.getDimensions().height / 2, this.getDimensions().width, this.getDimensions().height);
         ctx.restore();
     };
 
