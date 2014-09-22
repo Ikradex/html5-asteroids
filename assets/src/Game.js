@@ -32,7 +32,6 @@ define("Build", [
     Game.PHYSICS_LEVEL = 0;
     Game.INIT_LEVEL_NUM = -1;
     Game.GRAV_CONST = 1;
-    Game.DEBUG = true;
     Game.FPS = 80;
 
     Game.prototype = {
@@ -66,26 +65,16 @@ define("Build", [
 
             var players = this.entityManager.getPlayers(),
                 scoreX = 20;
-            for(var i = 0; i < players.length; i++) {
+            for (var i = 0; i < players.length; i++) {
                 var player = players[i];
                 ctx.fillText(player.getScore(), scoreX, 20);
                 scoreX += 20;
 
                 var livesX = 15;
-                for(var j = 0; j < player.lives; j++) {
+                for (var j = 0; j < player.lives; j++) {
                     ctx.drawImage(imgs["ship"], livesX, 40, 15, 25);
                     livesX += 15;
                 }
-            }
-
-            if (Game.DEBUG) {
-                ctx.font = "9px Monospace";
-                ctx.fillStyle = "#FFF";
-                ctx.fillText("Players: " + this.entityManager.getPlayers().length, canvas.width - 100, 20);
-                ctx.fillText("Asteroids: " + this.entityManager.getAsteroids().length, canvas.width - 100, 40);
-                ctx.fillText("Enemies: " + this.entityManager.getEnemies().length, canvas.width - 100, 60);
-                ctx.fillText("Projectiles: " + this.entityManager.getProjectiles().length, canvas.width - 100, 80);
-                ctx.fillText("Level: " + this._currentLevel.getLevelNum(), canvas.width - 100, 100);
             }
             ctx.restore();
         },
