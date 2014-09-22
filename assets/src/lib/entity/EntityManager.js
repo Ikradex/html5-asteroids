@@ -30,7 +30,7 @@ define("EntityManager", [
             });
         },
 
-        updateEntities: function (dt) {
+        update: function (dt) {
             this._projectiles.forEach(function (projectile) {
                 if (!projectile.getDestroyed()) {
                     if (projectile.getTravelDistance() < projectile.getMaxTravelDistance()) {

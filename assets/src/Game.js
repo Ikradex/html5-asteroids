@@ -64,6 +64,9 @@ define("Build", [
             // render level, debug etc
             this._currentLevel.render();
 
+            ctx.fillStyle = "#FFF";
+            ctx.fillText(this.entityManager.getPlayers()[0].getScore(), 20, 20);
+
             if (Game.DEBUG) {
                 ctx.font = "9px Monospace";
                 ctx.fillStyle = "#FFF";
