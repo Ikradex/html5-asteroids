@@ -73,7 +73,7 @@ define("ParticleEmitter", [
         },
 
         clearParticles: function () {
-            this._particles = [];
+            this._particles.length = 0;
         }
     };
 

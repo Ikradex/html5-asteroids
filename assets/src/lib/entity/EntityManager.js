@@ -79,13 +79,13 @@ define("EntityManager", [
         },
 
         _processCollisions: function () {
-            var all_entities = this.getEntities();
+            var entities = this.getEntities();
 
-            for (var i = 0; i < all_entities.length; i++) {
-                var entA = all_entities[i];
+            for (var i = 0; i < entities.length; i++) {
+                var entA = entities[i];
 
-                for (var j = i + 1; j < all_entities.length; j++) {
-                    var entB = all_entities[j];
+                for (var j = i + 1; j < entities.length; j++) {
+                    var entB = entities[j];
 
                     if ((!entA.getDestroyed() && !entB.getDestroyed()) && entA.intersects(entB)) {
                         entA.destroy(entB);
@@ -213,15 +213,15 @@ define("EntityManager", [
         },
 
         clearAsteroids: function () {
-            this._asteroids = [];
+            this._asteroids.length = 0;
         },
 
         clearEnemies: function () {
-            this._enemies = [];
+            this._enemies.length = 0;
         },
 
         clearProjectiles: function () {
-            this._projectiles = [];
+            this._projectiles.length = 0;
         }
     };
 
