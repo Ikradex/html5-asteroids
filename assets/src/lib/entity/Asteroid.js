@@ -90,6 +90,7 @@ define("Asteroid", [
                     force = dir.scale(Library.randomInteger(250, 350));
 
                 game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
+                game.particleEmitter.explode(entity.getPos().x, entity.getPos().y);
             }
 
             game.entityManager.removeAsteroid(this);

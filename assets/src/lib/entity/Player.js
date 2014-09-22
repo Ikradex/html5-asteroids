@@ -190,6 +190,7 @@ define("Player", [
                     force = dir.scale(300);
 
                 game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
+                game.particleEmitter.explode(entity.getPos().x, entity.getPos().y);
             }
 
             if (this.lives <= 0) {

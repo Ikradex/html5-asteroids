@@ -88,6 +88,7 @@ define("Saucer", [
                         force = dir.scale(200);
 
                     game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
+                    game.particleEmitter.explode(entity.getPos().x, entity.getPos().y);
                 }
             }
 
