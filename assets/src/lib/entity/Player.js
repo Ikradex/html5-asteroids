@@ -24,7 +24,7 @@ define("Player", [
         var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
         this._weapon = new Cannon(weaponPos.x, weaponPos.y);
         this._fireLock = false;
-        this._enginePower = 400;
+        this._enginePower = 1800;
 
         this._dTheta = 3.5;
 
@@ -179,6 +179,18 @@ define("Player", [
         if (valid) {
             this.setDestroyed(true);
             this.lives--;
+
+            // emit particles
+            for (var i = 0; i < Library.randomInteger(3, 8); i++) {
+                var ang = Library.randomInteger(-180, 180),
+                    dir = new Vector2D(Math.cos(ang), Math.sin(ang));
+
+                var wh = Library.randomInteger(1, 2),
+                    mass = Library.randomDouble(5, 10),
+                    force = dir.scale(300);
+
+                game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
+            }
 
             if (this.lives <= 0) {
                 game.entityManager.removePlayer(this);

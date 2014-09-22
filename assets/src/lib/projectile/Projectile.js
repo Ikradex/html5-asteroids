@@ -98,6 +98,9 @@ define("Projectile", [
 
         if (valid) {
             this.setDestroyed(true);
+            console.debug(entity.getScoreValue());
+            this.getShooter().addScore(entity.getScoreValue());
+
             game.entityManager.removeProjectile(this);
         }
     };

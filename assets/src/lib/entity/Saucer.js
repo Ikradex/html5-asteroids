@@ -76,6 +76,21 @@ define("Saucer", [
 
         if (valid) {
             this.setDestroyed(true);
+
+            if (entity) {
+                // emit particles
+                for (var i = 0; i < Library.randomInteger(3, 8); i++) {
+                    var ang = Library.randomInteger(-180, 180),
+                        dir = new Vector2D(Math.cos(ang), Math.sin(ang));
+
+                    var wh = Library.randomInteger(1, 2) / (Saucer.INIT_MASS / this.getMass()),
+                        mass = Library.randomDouble(2, 8) / (Saucer.INIT_MASS / this.getMass()),
+                        force = dir.scale(200);
+
+                    game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
+                }
+            }
+
             game.entityManager.removeEnemy(this);
         }
     };

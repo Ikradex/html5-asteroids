@@ -75,6 +75,7 @@ define("Asteroid", [
                 }
             }
 
+            // emit particles
             for (var i = 0; i < Library.randomInteger(3, 8); i++) {
                 var ang = Library.randomInteger(-180, 180),
                     dir = new Vector2D(Math.cos(ang), Math.sin(ang));
@@ -86,7 +87,7 @@ define("Asteroid", [
 
                 var wh = Library.randomInteger(1, 3) / this._stage,
                     mass = Library.randomDouble(5, 10) / this._stage,
-                    force = dir.scale(300);
+                    force = dir.scale(Library.randomInteger(250, 350));
 
                 game.particleEmitter.emit(entity.getPos().x, entity.getPos().y, wh, mass, force);
             }

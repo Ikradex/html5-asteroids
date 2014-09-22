@@ -22,7 +22,7 @@ define("Particle", [
         var corner = new Vector2D(0, 0),
             center = new Vector2D(canvas.width / 2, canvas.height / 2);
 
-        this._maxTravelDistance = center.distanceTo(corner) * 0.35;
+        this._maxTravelDistance = center.distanceTo(corner) * 1;
     }
 
     Particle.prototype.update = function (dt) {
