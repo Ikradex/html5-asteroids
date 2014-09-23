@@ -54,7 +54,7 @@ require(["Loader", "Build"], function (loader, Game) {
         f1.add(game, '_paused').name("Paused");
         f1.add(Game, 'PHYSICS_LEVEL', 0, 1).name("Physics");
         f1.add(Game, 'GRAV_CONST', 0, 5).name("Gravity");
-        f1.add(game, 'fps', 1, Game.MAX_FPS);
+        f1.add(game, 'fps', 1, Game.MAX_FPS).listen();
         f1.open();
 
         var f2 = gui.addFolder('Effects');
