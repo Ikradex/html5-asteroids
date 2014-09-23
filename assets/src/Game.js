@@ -6,8 +6,9 @@ define("Build", [
     "Level",
     "KeyboardState",
     "EntityManager",
-    "ParticleEmitter"
-], function (Vector2D, Library, Level, KeyboardState, EntityManager, ParticleEmitter) {
+    "ParticleEmitter",
+    "EventTimer"
+], function (Vector2D, Library, Level, KeyboardState, EntityManager, ParticleEmitter, EventTimer) {
     "use strict";
 
     function Game() {
@@ -26,6 +27,11 @@ define("Build", [
         this._currentLevel = null;
 
         this.fps = Game.MAX_FPS;
+        this._dt = 0.016;
+
+        this._updateFPSTimer = new EventTimer(1000, function () {
+            this.fps = Math.round((1000 / this._dt) / 1000);
+        }.bind(this));
     }
 
     Game.DEFAULT_WIDTH = 650;
@@ -58,7 +64,8 @@ define("Build", [
                 this._currentLevel.update(dt);
             }
 
-            this.fps = Math.round((1000 / dt) / 1000);
+            this._dt = dt;
+            this._updateFPSTimer.wait(dt);
         },
 
         render: function () {
