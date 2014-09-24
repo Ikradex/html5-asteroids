@@ -24,7 +24,7 @@ define("Player", [
         var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
         this._weapon = new Cannon(weaponPos.x, weaponPos.y);
         this._fireLock = false;
-        this._enginePower = 1800;
+        this._enginePower = 400;
 
         this._dTheta = 3.5;
 
