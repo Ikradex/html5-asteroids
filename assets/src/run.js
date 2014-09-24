@@ -28,7 +28,7 @@ require(["Loader", "Build"], function (loader, Game) {
                 dt = (now - then) / 1000;
 
             if (game.isStarted()) {
-                game.getUserInput(dt);
+                game.getUserInput();
                 game.update(dt);
                 game.render();
             }
@@ -55,11 +55,12 @@ require(["Loader", "Build"], function (loader, Game) {
         f1.add(Game, 'PHYSICS_LEVEL', 0, 1).name("Physics");
         f1.add(Game, 'GRAV_CONST', 0, 5).name("Gravity");
         f1.add(game, 'fps', 1, Game.MAX_FPS).listen();
+        f1.add(game, 'speed', 0.1, 2).name("Game speed");
         f1.open();
 
         var f2 = gui.addFolder('Effects');
         f2.add(Game, 'PARTICLES', 0, 1).name("Particles");
-        f2.add(Game, 'SHADOW_BLUR', 0, 1).name("Shadows");
+        f2.add(Game, 'SHADOW_BLUR', 0, 1).name("Flare");
         f2.open();
 
         var f3 = gui.addFolder('Entities');

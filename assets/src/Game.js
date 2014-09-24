@@ -26,6 +26,8 @@ define("Build", [
 
         this._currentLevel = null;
 
+        this.speed = 1;
+
         this.fps = Game.MAX_FPS;
         this._dt = 0.016;
 
@@ -37,15 +39,16 @@ define("Build", [
     Game.DEFAULT_WIDTH = 650;
     Game.DEFAULT_HEIGHT = 450;
 
-    Game.PHYSICS_LEVEL = 0;
+    Game.PHYSICS_LEVEL = 1;
     Game.GRAV_CONST = 1;
+    Game.GRAV_MIN_DISTANCE = 200;
 
     Game.PARTICLES = 1;
     Game.SHADOW_BLUR = 0.1;
 
     Game.INIT_LEVEL_NUM = -1;
 
-    Game.MAX_FPS = 80;
+    Game.MAX_FPS = 65;
 
     Game.prototype = {
         /**
@@ -55,17 +58,18 @@ define("Build", [
          */
         constructor: Game,
 
-        getUserInput: function (dt) {
-            this.entityManager.processInput(dt);
+        getUserInput: function () {
+            this.entityManager.processInput(this._dt);
         },
 
         update: function (dt) {
+            this._dt = dt * this.speed;
+
             if (this._currentLevel != null && this._started && !this._paused) {
-                this._currentLevel.update(dt);
+                this._currentLevel.update(this._dt);
             }
 
-            this._dt = dt;
-            this._updateFPSTimer.wait(dt);
+            this._updateFPSTimer.wait(this._dt);
         },
 
         render: function () {
