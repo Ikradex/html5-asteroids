@@ -31,13 +31,6 @@ define("Projectile", [
         this._active = false;
     }
 
-    // Override CollidableEntity.intersects
-    /*Projectile.prototype.intersects = function (collidableEntity) {
-        var c = collidableEntity.getBoundingCircle();
-
-        return Library.pointIntersectsCircle(this._pos.x, this._pos.y, c.x, c.y, c.r);
-    };*/
-
     Projectile.prototype.update = function (dt) {
         this._updatePosition(dt);
         this._travelDistance = this._travelDistance.add(this.getVelocity().scale(dt));
@@ -98,7 +91,6 @@ define("Projectile", [
 
         if (valid) {
             this.setDestroyed(true);
-            console.debug(entity.getScoreValue());
             this.getShooter().addScore(entity.getScoreValue());
 
             game.entityManager.removeProjectile(this);
