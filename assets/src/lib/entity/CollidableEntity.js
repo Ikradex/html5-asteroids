@@ -22,7 +22,6 @@ define("CollidableEntity", [
 
     CollidableEntity.prototype.attracts = function (entity) {
         var force = this._getGravityForce(entity);
-
         this.applyForce(force);
     };
 
@@ -58,11 +57,7 @@ define("CollidableEntity", [
             distance = this.getPos().distanceTo(collidableEntity.getPos()),
             dir = new Vector2D(Math.cos(angle), Math.sin(angle));
 
-        var force = 0;
-
-        if (distance <= 400) {
-            force = Library.forceOfGravity(game.GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
-        }
+        var force = Library.forceOfGravity(Game.GRAV_CONST, this.getMass(), collidableEntity.getMass(), distance);
 
         return dir.scale(force);
     };
