@@ -103,7 +103,9 @@ define("EntityManager", [
 
                 for (var j = i + 1; j < entities.length; j++) {
                     var entB = entities[j];
-                    entA.attracts(entB);
+                    if (entA.distanceTo(entB) <= Game.GRAV_MIN_DISTANCE) {
+                        entA.attracts(entB);
+                    }
                 }
             }
         },
