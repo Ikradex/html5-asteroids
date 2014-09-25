@@ -50,7 +50,7 @@ define([
             game.entityManager.update(dt);
             game.particleEmitter.update(dt);
 
-            if (this.over()) {
+            if (this.isOver()) {
                 this._resetTimer.wait(dt)
             } else {
                 this._spawnTimer.wait(dt);
@@ -75,7 +75,7 @@ define([
             }
         },
 
-        over: function () {
+        isOver: function () {
             var numEntities = game.entityManager.getAsteroids().length + game.entityManager.getEnemies();
 
             return (numEntities == 0);
