@@ -92,7 +92,7 @@ define("Saucer", [
                 }
             }
 
-            game.entityManager.removeEnemy(this);
+            game.entityManager.remove(this);
         }
     };
 
@@ -139,7 +139,7 @@ define("Saucer", [
     Saucer.prototype.attracts = function (entity) {
         var valid = true;
 
-        if (game.entityManager.isProjectile) {
+        if (game.entityManager.isProjectile(entity)) {
             valid = (entity.getShooter() != this);
         }
 

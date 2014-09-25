@@ -32,6 +32,12 @@ define("Projectile", [
     }
 
     Projectile.prototype.update = function (dt) {
+        if (this.getTravelDistance() >= this.getMaxTravelDistance()) {
+            this.setDestroyed(true);
+            game.entityManager.remove(this);
+            return;
+        }
+
         this._updatePosition(dt);
         this._travelDistance = this._travelDistance.add(this.getVelocity().scale(dt));
     };
@@ -93,7 +99,7 @@ define("Projectile", [
             this.setDestroyed(true);
             this.getShooter().addScore(entity.getScoreValue());
 
-            game.entityManager.removeProjectile(this);
+            game.entityManager.remove(this);
         }
     };
 

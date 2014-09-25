@@ -65,7 +65,7 @@ define("Weapon", [
             var force = dir.scale(this._power);
 
             projectile.propel(force, dir, dt);
-            game.entityManager.addProjectile(projectile);
+            game.entityManager.add(projectile);
 
             this._applyHeat(this._heatRate);
 

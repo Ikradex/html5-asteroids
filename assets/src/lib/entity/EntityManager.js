@@ -15,66 +15,32 @@ define("EntityManager", [
             throw new TypeError("EntityManager constructor cannot be called as a function.");
         }
 
-        this._players = [];
-        this._enemies = [];
-        this._asteroids = [];
-        this._projectiles = [];
+        this._entities = [];
     }
 
     EntityManager.prototype = {
         constructor: EntityManager,
 
         processInput: function (dt) {
-            this._players.forEach(function (player) {
+            this.getPlayers().forEach(function (player) {
                 player.processInput(dt);
             });
         },
 
         update: function (dt) {
-            this._projectiles.forEach(function (projectile) {
-                if (!projectile.getDestroyed()) {
-                    if (projectile.getTravelDistance() < projectile.getMaxTravelDistance()) {
-                        projectile.update(dt);
-                    } else {
-                        Library.removeArrayElem(this._projectiles, projectile);
-                    }
-                } else {
-                    Library.removeArrayElem(this._projectiles, projectile);
+            this.getEntities().forEach(function (entity) {
+                if (entity.getDestroyed()) {
+                    Library.removeArrayElem(this._entities, entity);
+                    return;
                 }
+
+                entity.update(dt);
             }.bind(this));
-
-            this._asteroids.forEach(function (asteroid) {
-                asteroid.update(dt);
-            });
-
-            this._enemies.forEach(function (enemy) {
-                if (!enemy.getDestroyed()) {
-                    enemy.update(dt);
-                } else {
-                    Library.removeArrayElem(this._enemies, enemy);
-                }
-            }.bind(this));
-
-            this._players.forEach(function (player) {
-                player.update(dt);
-            });
         },
 
         render: function () {
-            this._projectiles.forEach(function (projectile) {
-                projectile.render();
-            });
-
-            this._players.forEach(function (player) {
-                player.render();
-            });
-
-            this._enemies.forEach(function (enemy) {
-                enemy.render();
-            });
-
-            this._asteroids.forEach(function (asteroid) {
-                asteroid.render();
+            this.getEntities().forEach(function (entity) {
+                entity.render();
             });
         },
 
@@ -101,9 +67,10 @@ define("EntityManager", [
             for (var i = 0; i < entities.length; i++) {
                 var entA = entities[i];
 
-                for (var j = i + 1; j < entities.length; j++) {
+                for (var j = 0; j < entities.length; j++) {
                     var entB = entities[j];
-                    if (entA.distanceTo(entB) <= Game.GRAV_MIN_DISTANCE) {
+
+                    if (entA != entB) {
                         entA.attracts(entB);
                     }
                 }
@@ -126,8 +93,10 @@ define("EntityManager", [
                     r: 75
                 };
 
-            for (var i = 0; i < this._asteroids.length; i++) {
-                var asteroid = this._asteroids[i];
+            var asteroids = this.getAsteroids();
+
+            for (var i = 0; i < asteroids.length; i++) {
+                var asteroid = asteroids[i];
 
                 if (Library.circlesIntersect(respawn.x, respawn.y, respawn.r,
                     asteroid.getPos().x, asteroid.getPos().y, asteroid.getDimensions().width)) {
@@ -139,59 +108,28 @@ define("EntityManager", [
             return clear;
         },
 
+        add: function (entity) {
+            this._entities.push(entity);
+        },
+
+        remove: function (entity) {
+            Library.removeArrayElem(this._entities, entity);
+        },
+
         getEntities: function () {
-            var entities = [];
-
-            entities = entities.concat(this._players);
-            entities = entities.concat(this._asteroids);
-            entities = entities.concat(this._enemies);
-            entities = entities.concat(this._projectiles);
-
-            return entities;
-        },
-
-        addPlayer: function (player) {
-            this._players.push(player);
-        },
-
-        removePlayer: function (player) {
-            Library.removeArrayElem(this.getPlayers(), player);
+            return this._entities;
         },
 
         isPlayer: function (player) {
             return player instanceof Player;
         },
 
-        addEnemy: function (enemy) {
-            this._enemies.push(enemy);
-        },
-
-        removeEnemy: function (enemy) {
-            Library.removeArrayElem(this.getEnemies(), enemy);
-        },
-
         isEnemy: function (enemy) {
             return enemy instanceof Enemy;
         },
 
-        addAsteroid: function (asteroid) {
-            this._asteroids.push(asteroid);
-        },
-
-        removeAsteroid: function (asteroid) {
-            Library.removeArrayElem(this.getAsteroids(), asteroid);
-        },
-
         isAsteroid: function (asteroid) {
             return asteroid instanceof Asteroid;
-        },
-
-        addProjectile: function (projectile) {
-            this._projectiles.push(projectile);
-        },
-
-        removeProjectile: function (projectile) {
-            Library.removeArrayElem(this.getProjectiles(), projectile);
         },
 
         isProjectile: function (projectile) {
@@ -199,31 +137,55 @@ define("EntityManager", [
         },
 
         getAsteroids: function () {
-            return this._asteroids;
+            var asteroids = [];
+
+            this.getEntities().forEach(function (entity) {
+                if (this.isAsteroid(entity)) {
+                    asteroids.push(entity);
+                }
+            }.bind(this));
+
+            return asteroids;
         },
 
         getEnemies: function () {
-            return this._enemies;
+            var enemies = [];
+
+            this.getEntities().forEach(function (entity) {
+                if (this.isEnemy(entity)) {
+                    enemies.push(entity);
+                }
+            }.bind(this));
+
+            return enemies;
         },
 
         getPlayers: function () {
-            return this._players;
+            var players = [];
+
+            this.getEntities().forEach(function (entity) {
+                if (this.isPlayer(entity)) {
+                    players.push(entity);
+                }
+            }.bind(this));
+
+            return players;
         },
 
         getProjectiles: function () {
-            return this._projectiles;
+            var projectiles = [];
+
+            this.getEntities().forEach(function (entity) {
+                if (this.isProjectile(entity)) {
+                    projectiles.push(entity);
+                }
+            }.bind(this));
+
+            return projectiles;
         },
 
-        clearAsteroids: function () {
-            this._asteroids.length = 0;
-        },
-
-        clearEnemies: function () {
-            this._enemies.length = 0;
-        },
-
-        clearProjectiles: function () {
-            this._projectiles.length = 0;
+        clear: function () {
+            this._entities.length = 0;
         }
     };
 

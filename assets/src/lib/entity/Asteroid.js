@@ -71,7 +71,7 @@ define("Asteroid", [
                     var velocity = new Vector2D(this._velocity.x * velFactorX, this._velocity.y * velFactorY),
                         child = new Asteroid(newX, newY, this._width / 2, this._height / 2, this.getMass(), this.getScoreValue() * 2, velocity, this._stage + 1);
 
-                    game.entityManager.addAsteroid(child);
+                    game.entityManager.add(child);
                 }
             }
 
@@ -93,7 +93,7 @@ define("Asteroid", [
                 game.particleEmitter.explode(entity.getPos().x, entity.getPos().y);
             }
 
-            game.entityManager.removeAsteroid(this);
+            game.entityManager.remove(this);
         }
     };
 

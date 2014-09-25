@@ -63,13 +63,13 @@ require(["Loader", "Build"], function (loader, Game) {
         f2.add(Game, 'SHADOW_BLUR', 0, 1).name("Flare");
         f2.open();
 
-        var f3 = gui.addFolder('Entities');
+        /*var f3 = gui.addFolder('Entities');
         f3.add(game.entityManager._players, 'length', 0, 4).name("Players").listen();
         f3.add(game.entityManager._asteroids, 'length', 0, 48).name("Asteroids").listen();
         f3.add(game.entityManager._enemies, 'length', 0, 2).name("Enemies").listen();
         f3.add(game.entityManager._projectiles, 'length', 0, 30).name("Projectiles").listen();
         f3.add(game.particleEmitter._particles, 'length', 0, 100).name("Particles").listen();
-        f3.open();
+        f3.open();*/
 
     });
 

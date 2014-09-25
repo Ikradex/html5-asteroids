@@ -23,6 +23,7 @@ define("Build", [
 
         this._started = false;
         this._paused = false;
+        this._over = false;
 
         this._currentLevel = null;
 
@@ -33,6 +34,10 @@ define("Build", [
 
         this._updateFPSTimer = new EventTimer(1000, function () {
             this.fps = Math.round((1000 / this._dt) / 1000);
+        }.bind(this));
+
+        this._nextLevelTimer = new EventTimer(Game.LEVEL_RESET_INTERVAL, function () {
+            this.nextLevel();
         }.bind(this));
     }
 
@@ -47,6 +52,7 @@ define("Build", [
     Game.SHADOW_BLUR = 0.1;
 
     Game.INIT_LEVEL_NUM = -1;
+    Game.LEVEL_RESET_INTERVAL = 3000;
 
     Game.MAX_FPS = 65;
 
@@ -66,6 +72,10 @@ define("Build", [
             this._dt = dt * this.speed;
 
             if (this._currentLevel != null && this._started && !this._paused) {
+                if (!this.isOver() && this._currentLevel.isOver()) {
+                    this._nextLevelTimer.wait(dt);
+                }
+
                 this._currentLevel.update(this._dt);
             }
 
@@ -96,6 +106,13 @@ define("Build", [
                     livesX += 15;
                 }
             }
+
+            if (game.isOver()) {
+                var text = "GAME OVER";
+                ctx.font = "48px AtariChunky";
+                ctx.fillStyle = "#FFF";
+                ctx.fillText(text, canvas.width / 2 - (text.length * 24), canvas.height / 2);
+            }
             ctx.restore();
         },
 
@@ -113,6 +130,14 @@ define("Build", [
             this._paused = false;
         },
 
+        over: function () {
+            this._over = true;
+        },
+
+        isOver: function () {
+            return this._over;
+        },
+
         pause: function () {
             this._paused = true;
         },
@@ -123,6 +148,10 @@ define("Build", [
 
         isStarted: function () {
             return this._started;
+        },
+
+        nextLevel: function () {
+            this._currentLevel.start();
         }
     };
 

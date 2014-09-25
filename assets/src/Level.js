@@ -63,10 +63,7 @@ define([
         },
 
         start: function () {
-            game.entityManager.clearEnemies();
-            game.entityManager.clearAsteroids();
-            game.entityManager.clearProjectiles();
-            game.particleEmitter.clearParticles();
+            game.entityManager.clear();
 
             this._levelNum++;
 
@@ -92,7 +89,7 @@ define([
             var spawnPos = this.getPlayerSpawnPos(),
                 player = new Player(spawnPos.x, spawnPos.y, 19, 34);
 
-            game.entityManager.addPlayer(player);
+            game.entityManager.add(player);
         },
 
         _spawnEnemy: function () {
@@ -113,7 +110,7 @@ define([
 
             enemy.setVelocity(new Vector2D(xVel, yVel));
 
-            game.entityManager.addEnemy(enemy);
+            game.entityManager.add(enemy);
         },
 
         _spawnAsteroid: function () {
@@ -151,7 +148,7 @@ define([
 
             var asteroid = new Asteroid(pX, pY, 60, 60, Level.ASTEROID_INIT_MASS, Level.ASTEROID_INIT_SCORE_VALUE, randVel, 1);
 
-            game.entityManager.addAsteroid(asteroid);
+            game.entityManager.add(asteroid);
         },
 
         getPlayerSpawnPos: function () {

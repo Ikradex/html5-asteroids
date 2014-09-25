@@ -192,7 +192,7 @@ define("Player", [
             }
 
             if (this.lives <= 0) {
-                game.entityManager.removePlayer(this);
+                game.entityManager.remove(this);
             }
         }
     };
