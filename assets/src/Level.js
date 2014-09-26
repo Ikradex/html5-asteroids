@@ -63,7 +63,12 @@ define([
         },
 
         start: function () {
+            var players = game.entityManager.getPlayers();
             game.entityManager.clear();
+
+            players.forEach(function (player) {
+                game.entityManager.add(player);
+            });
 
             this._levelNum++;
 
@@ -134,7 +139,7 @@ define([
                 pY = Library.randomBoolean() ? pYPos : pYNeg;
 
             // get asteroid random velocity
-            var vMin = Asteroid.MIN_VELOCITY,
+            var vMin = 5,
                 vMax = Asteroid.MIN_VELOCITY + 5 + (Asteroid.MIN_VELOCITY * (this._levelNum * 0.2));
 
             if (vMax > Asteroid.MAX_VELOCITY) {
