@@ -3,10 +3,10 @@
 define("Player", [
     "EventTimer",
     "CollidableEntity",
-    "Cannon",
+    "Minigun",
     "Vector2D",
     "Library"
-], function (EventTimer, CollidableEntity, Cannon, Vector2D, Library) {
+], function (EventTimer, CollidableEntity, Minigun, Vector2D, Library) {
     "use strict";
 
     Player.inherits([CollidableEntity]);
@@ -19,10 +19,13 @@ define("Player", [
         }
 
         this.lives = 3;
+        this._maxLives = 4;
         this._canRespawn = false;
 
+        this._score_to_reward = 10000;
+
         var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
-        this._weapon = new Cannon(weaponPos.x, weaponPos.y);
+        this._weapon = new Minigun(weaponPos.x, weaponPos.y);
         this._fireLock = false;
         this._enginePower = 400;
 
@@ -46,6 +49,16 @@ define("Player", [
         if (!this.getDestroyed()) {
             this._updatePosition(dt);
             this._weapon.update(dt);
+
+            if (this.getScore() >= this._score_to_reward) {
+                this.lives++;
+                this._score_to_reward += 10000;
+                // play reward sound
+            }
+
+            if (this._score_interp < this.getScore()) {
+                this._score_interp += 5;
+            }
         } else {
             this._respawnTimer.wait(dt);
 
@@ -62,6 +75,8 @@ define("Player", [
             ctx.rotate(this._theta - Math.PI / 2);
             ctx.drawImage(this._img, -(this.getDimensions().width / 2), -(this.getDimensions().height / 2), this.getDimensions().width, this.getDimensions().height);
             ctx.restore();
+
+            this._weapon.render();
         }
     };
 
@@ -128,12 +143,9 @@ define("Player", [
     };
 
     Player.prototype.shoot = function (dt) {
-        var PHYSICS_LEVEL = Game.PHYSICS_LEVEL;
         var opposingForce = this._weapon.fire(this, this.getVelocity(), this.getDir(), dt);
 
-        if (PHYSICS_LEVEL > 0) {
-            this.applyForce(opposingForce.scale(PHYSICS_LEVEL));
-        }
+        this.applyForce(opposingForce.scale(Game.PHYSICS_LEVEL));
     };
 
     // Override Entity._updatePosition
