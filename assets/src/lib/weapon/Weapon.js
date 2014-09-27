@@ -13,9 +13,22 @@ define("Weapon", [
         this._pos = new Vector2D(x, y);
 
         this._power = 1000;
-        this._cooldown = 0;
-        this._heatRate = 75;
+
+        this._ammo = Infinity;
+
+        this._minHeat = 0;
+        this._maxHeat = 100;
+        this._heat = this._minHeat;
+
+        this._minHeatRate = 5;
+        this._maxHeatRate = 50;
+        this._heatRate = this._minHeatRate;
+        this._heatRateMod = 1;
+
+        this._coolRate = 1000;
+
         this._fireLock = true;
+        this._maxInaccuracy = 20;
 
         this._projectileMaxTravelDistance = (projectileTravelDistance !== null ||
             typeof projectileTravelDistance == "undefined") ?
@@ -26,11 +39,31 @@ define("Weapon", [
         constructor: Weapon,
 
         update: function (dt) {
-            if (this._cooldown > 0) {
-                this._cooldown -= 1000 * dt;
+            if (this._heat > this._minHeat) {
+                this._heat -= this._coolRate * dt;
+
+                if (this._heatRate > 0) {
+                    this._heatRate -= 0.5;
+                } else {
+                    this._heatRate = 0;
+                }
             } else {
-                this._cooldown = 0;
+                this._heat = this._minHeat;
+                this._heatRate = this._minHeatRate;
             }
+        },
+
+        render: function () {
+            var offset = 25;
+
+            ctx.save();
+            ctx.strokeStyle = ctx.fillStyle = "#FFF";
+            //ctx.strokeRect(this.getPos().x + offset, this.getPos().y - offset, 40, 10);
+            //ctx.fillRect(this.getPos().x + offset, this.getPos().y - offset, 40 * (this._heat / this._maxHeat), 10);
+            if (this._ammo < Infinity) {
+                ctx.fillText(this._ammo, this.getPos().x + offset, this.getPos().y - offset);
+            }
+            ctx.restore();
         },
 
         rotate: function (theta, origin) {
@@ -58,10 +91,6 @@ define("Weapon", [
         },
 
         _propelProjectile: function (projectile, dir, dt) {
-            if (this._cooldown > 0) {
-                return dir.scale(0);
-            }
-
             var force = dir.scale(this._power);
 
             projectile.propel(force, dir, dt);
@@ -74,7 +103,7 @@ define("Weapon", [
         },
 
         _applyHeat: function (heat) {
-            this._cooldown += heat;
+            this._heat += heat;
         }
     };
 

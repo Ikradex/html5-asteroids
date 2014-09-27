@@ -17,7 +17,7 @@ define("Cannon", [
         }
 
         this._power = 850;
-        this._heatRate = 50;
+        //this._heatRate = 50;
 
         var corner = new Vector2D(0, 0),
             center = new Vector2D(canvas.width / 2, canvas.height / 2);
@@ -25,19 +25,15 @@ define("Cannon", [
         this.setProjectileMaxTravelDistance(center.distanceTo(corner) * 0.75);
     }
 
-    Cannon.prototype.update = function (dt) {
-        if (this._cooldown > 0) {
-            this._cooldown -= 1000 * dt;
-        } else {
-            this._cooldown = 0;
-        }
-    };
-
     Cannon.prototype.fire = function (shooter, velocity, dir, dt) {
-        var bullet = new Bullet(shooter, this.getPos().x, this.getPos().y, velocity);
-        bullet.setMaxTravelDistance(this.getProjectileMaxTravelDistance());
+        var force = new Vector2D(0, 0);
 
-        var force = this._propelProjectile(bullet, dir, dt);
+        if (this._heat < this._maxHeat) {
+            var bullet = new Bullet(shooter, this.getPos().x, this.getPos().y, velocity);
+            bullet.setMaxTravelDistance(this.getProjectileMaxTravelDistance());
+
+            force = this._propelProjectile(bullet, dir, dt);
+        }
 
         return force;
     };
