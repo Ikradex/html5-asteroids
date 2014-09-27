@@ -29,11 +29,6 @@ define("EntityManager", [
 
         update: function (dt) {
             this.getEntities().forEach(function (entity) {
-                if (entity.getDestroyed()) {
-                    Library.removeArrayElem(this._entities, entity);
-                    return;
-                }
-
                 entity.update(dt);
             }.bind(this));
         },
@@ -70,7 +65,7 @@ define("EntityManager", [
                 for (var j = 0; j < entities.length; j++) {
                     var entB = entities[j];
 
-                    if (entA != entB) {
+                    if (entA != entB && (!entA.getDestroyed() && !entB.getDestroyed())) {
                         entA.attracts(entB);
                     }
                 }
