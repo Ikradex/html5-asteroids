@@ -18,6 +18,10 @@ define("Vector2D", [], function () {
         this.y = y;
     }
 
+    Vector2D.cross = function (v1, v2) {
+        return v1.x * v2.y - v1.y * v2.x;
+    };
+
     Vector2D.prototype = {
         constructor: Vector2D,
 

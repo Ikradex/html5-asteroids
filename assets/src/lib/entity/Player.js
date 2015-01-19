@@ -3,10 +3,11 @@
 define("Player", [
     "EventTimer",
     "CollidableEntity",
+    "Cannon",
     "Minigun",
     "Vector2D",
     "Library"
-], function (EventTimer, CollidableEntity, Minigun, Vector2D, Library) {
+], function (EventTimer, CollidableEntity, Cannon, Minigun, Vector2D, Library) {
     "use strict";
 
     Player.inherits([CollidableEntity]);
@@ -24,12 +25,14 @@ define("Player", [
 
         this._score_to_reward = 10000;
 
-        var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
+        var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this.getRad() - Math.PI);
         this._weapon = new Minigun(weaponPos.x, weaponPos.y);
         this._fireLock = false;
         this._enginePower = 400;
 
-        this._dTheta = 3.5;
+        this._thruster_dRad = Library.toRadians(3.5);
+
+        this._maxVelocity = 500;
 
         this._respawnTimer = new EventTimer(Player.RESPAWN_INTERVAL, function () {
             this._canRespawn = true;
@@ -47,7 +50,7 @@ define("Player", [
 
     Player.prototype.update = function (dt) {
         if (!this.getDestroyed()) {
-            this._updatePosition(dt);
+            this._move(dt);
             this._weapon.update(dt);
 
             if (this.getScore() >= this._score_to_reward) {
@@ -72,7 +75,7 @@ define("Player", [
         if (!this.getDestroyed()) {
             ctx.save();
             ctx.translate(this.getPos().x, this.getPos().y);
-            ctx.rotate(this._theta - Math.PI / 2);
+            ctx.rotate(this.getRad() - Math.PI / 2);
             ctx.drawImage(this._img, -(this.getDimensions().width / 2), -(this.getDimensions().height / 2), this.getDimensions().width, this.getDimensions().height);
             ctx.restore();
 
@@ -85,11 +88,11 @@ define("Player", [
             var input = game.input;
 
             if (input.pressed("A") || input.pressed("left")) {
-                this.rotate(this._compute_dTheta(-1, dt));
+                this.rotate(this._compute_thruster_dRad(-1, dt));
             }
 
             if (input.pressed("D") || input.pressed("right")) {
-                this.rotate(this._compute_dTheta(1, dt));
+                this.rotate(this._compute_thruster_dRad(1, dt));
             }
 
             if (input.pressed("W") || input.pressed("up")) {
@@ -109,59 +112,42 @@ define("Player", [
         }
     };
 
-    Player.prototype.rotate = function (theta) {
-        var resulting_theta = this._theta + theta;
-
-        if (resulting_theta > Math.PI) {
-            resulting_theta = -(Math.PI);
+    Player.prototype.rotate = function(dRad) {
+        var resulting_rad = this.getRad() + dRad;
+        
+        if (resulting_rad > Math.PI * 2) {
+            resulting_rad = 0;
         }
 
-        if (resulting_theta < -(Math.PI)) {
-            resulting_theta = Math.PI;
+        if (resulting_rad < 0) {
+            resulting_rad = Math.PI * 2;
         }
 
-        this._theta = resulting_theta;
-        this._dir.setComponents(-Math.cos(resulting_theta), -Math.sin(resulting_theta));
-
-        this._weapon.rotate(theta - Math.PI, this.getPos());
-    };
-
-    Player.prototype.rotateTo = function (theta) {
-        var diff_theta = Math.abs(theta - this._theta);
-
-        diff_theta *= (theta < this._theta) ? 1 : -1;
-
-        this._theta = theta;
-        this._dir.setComponents(-Math.cos(theta), -Math.sin(theta));
+        this.setRad(resulting_rad);
+        this._weapon.rotate(dRad - Math.PI, this.getPos());
     };
 
     Player.prototype.thrust = function () {
-        var thrustForce = this.getDir().scale(this._enginePower);
+        var thrustForce = this.getTheta().scale(this._enginePower);
         this.applyForce(thrustForce);
 
         this._img = imgs["ship_motion"];
     };
 
     Player.prototype.shoot = function (dt) {
-        var opposingForce = this._weapon.fire(this, this.getVelocity(), this.getDir(), dt);
+        var opposingForce = this._weapon.fire(this, this.getVelocity(), this.getRad(), dt);
 
         this.applyForce(opposingForce.scale(Game.PHYSICS_LEVEL));
     };
 
-    // Override Entity._updatePosition
-    Player.prototype._updatePosition = function (dt) {
-        this._handleOutOfBounds(this._checkOutOfBounds());
-        this.setPos(this.getPos().add(this.getVelocity().scale(dt)));
-        this.setVelocity(this.getVelocity().add(this.getAcceleration()));
-        // add friction (I know, I know, space, but game-mechanics)
+    Player.prototype._move = function (dt) {
+        this._updatePosition(dt);
         this.setVelocity(this.getVelocity().scale(0.99));
 
-        var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this._theta - Math.PI);
-        this._weapon.setPos(new Vector2D(weaponPos.x, weaponPos.y));
+        this._thrusterDir = this.getRad() + Math.PI;
 
-        // reset acceleration and forces
-        this.getAcceleration().setComponents(0, 0);
-        this.getForces().setComponents(0, 0);
+        var weaponPos = Library.pointOnCircumference(this.getPos(), this.getDimensions().width / 2, this.getRad() - Math.PI);
+        this._weapon.setPos(new Vector2D(weaponPos.x, weaponPos.y));
     };
 
     // Override CollidableEntity.attracts
@@ -207,6 +193,10 @@ define("Player", [
                 game.entityManager.remove(this);
             }
         }
+    };
+
+    Player.prototype._compute_thruster_dRad = function(dir, dt) {
+        return this._thruster_dRad * dir;
     };
 
     Player.prototype._respawn = function () {

@@ -30,6 +30,7 @@ requirejs.config({
         'Explosion': 'assets/src/lib/projectile/Explosion',
         'ParticleEmitter': 'assets/src/lib/projectile/ParticleEmitter',
         'Bullet': 'assets/src/lib/projectile/Bullet',
+        'LightBullet': 'assets/src/lib/projectile/LightBullet',
         'Weapon': 'assets/src/lib/weapon/Weapon',
         'Cannon': 'assets/src/lib/weapon/Cannon',
         'Minigun': 'assets/src/lib/weapon/Minigun'

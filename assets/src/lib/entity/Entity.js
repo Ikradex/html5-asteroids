@@ -10,17 +10,19 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
         this._scoreValue = scoreValue;
         this._score = 0;
+        this._score_interp = this._score;
 
         this._pos = new Vector2D(x, y);
         this._velocity = new Vector2D(0, 0);
         this._acceleration = new Vector2D(0, 0);
 
+        this._maxVelocity = 1000;
+
         this._forces = new Vector2D(0, 0);
         this._mass = mass;
 
-        this._theta = Math.PI / 2; // in radians
-        this._dTheta = 4.975; // in radians
-        this._dir = new Vector2D(-Math.cos(this._theta), -Math.sin(this._theta));
+        this._rad = Math.PI / 2;
+        this._dRad = 0;
 
         if (width !== "undefined" && height !== "undefined") {
             this._width = width;
@@ -40,6 +42,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
         getPos: function () {
             return this._pos;
+        },
+
+        getRad: function () {
+            return this._rad;
         },
 
         getVelocity: function () {
@@ -65,8 +71,8 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             };
         },
 
-        getDir: function () {
-            return this._dir;
+        getTheta: function () {
+            return new Vector2D(-Math.cos(this._rad), -Math.sin(this._rad));
         },
 
         getBounds: function () {
@@ -90,6 +96,10 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             this._pos = pos;
         },
 
+        setRad: function (rad) {
+            this._rad = rad;
+        },
+
         setVelocity: function (velocity) {
             this._velocity = velocity;
         },
@@ -109,10 +119,6 @@ define("Entity", ["Vector2D"], function (Vector2D) {
         setDimensions: function (w, h) {
             this._width = w;
             this._height = h;
-        },
-
-        setDir: function (dir) {
-            this._dir = dir;
         },
 
         setBounds: function (bounds) {
@@ -140,10 +146,17 @@ define("Entity", ["Vector2D"], function (Vector2D) {
             return this.getPos().distanceTo(entity.getPos());
         },
 
-        _compute_dTheta: function (dir, dt) {
-            return this._dTheta * dir * dt;
-        },
+        rotateTo: function (rad) {
+            var currRad = this._rad,
+                diff_rad = Math.abs(rad - currRad);
 
+            diff_rad *= (rad < currRad) ? 1 : -1;
+
+            //this._theta = theta;
+            //this._theta.setComponents(-Math.cos(theta), -Math.sin(theta));
+            this._rad = rad;
+        },
+        
         _compute_dForce: function (dir, force) {
             // add XY forces of engine at direction
             return dir.scale(force);
@@ -162,13 +175,16 @@ define("Entity", ["Vector2D"], function (Vector2D) {
 
             this._handleOutOfBounds(newPos);
 
-            this.setVelocity(this.getVelocity().add(this.getAcceleration()));
+            var velocity = this.getVelocity().add(this.getAcceleration());
+            velocity.x = Math.min(Math.max(velocity.x, -this._maxVelocity), this._maxVelocity);
+            velocity.y = Math.min(Math.max(velocity.y, -this._maxVelocity), this._maxVelocity);
+            this.setVelocity(velocity);
+
+
 
             this.setPos(this.getPos().add(this.getVelocity().scale(dt)));
 
-            if (this._weapon != null && typeof this._weapon !== "undefined") {
-                this.getWeapon().setPos(newPos);
-            }
+            this._rad += this._dRad;
 
             this.getAcceleration().setComponents(0, 0);
             this.getForces().setComponents(0, 0);

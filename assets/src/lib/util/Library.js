@@ -158,5 +158,9 @@ define("Library", [], function () {
         return rad * (180 / Math.PI);
     };
 
+    Library.normalize = function (x, min, max, a, b) {
+        return (((b - a) * (x - min)) / max - min) + a;
+    };
+
     return Library;
 });

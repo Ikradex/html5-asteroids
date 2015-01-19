@@ -51,9 +51,9 @@ define([
             game.particleEmitter.update(dt);
 
             if (this.isOver()) {
-                this._resetTimer.wait(dt)
+                //this._resetTimer.wait(dt)
             } else {
-                this._spawnTimer.wait(dt);
+                //this._spawnTimer.wait(dt);
             }
         },
 
@@ -120,7 +120,7 @@ define([
 
         _spawnAsteroid: function () {
             // get asteroid random position
-            var spawnRadius = 50;
+            var spawnRadius = 20;
 
             var asteroidDim = {
                 width: Asteroid.DEFAULT_WIDTH,

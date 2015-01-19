@@ -90,10 +90,11 @@ define("Weapon", [
             this._projectileMaxTravelDistance = distance;
         },
 
-        _propelProjectile: function (projectile, dir, dt) {
-            var force = dir.scale(this._power);
+        _propelProjectile: function (projectile, rad, dt) {
+            var dir = new Vector2D(-Math.cos(rad), -Math.sin(rad)),
+                force = dir.scale(this._power);
 
-            projectile.propel(force, dir, dt);
+            projectile.propel(force, rad, dt);
             game.entityManager.add(projectile);
 
             this._applyHeat(this._heatRate);

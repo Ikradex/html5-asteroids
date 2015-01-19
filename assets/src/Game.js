@@ -23,7 +23,6 @@ define("Build", [
 
         this._started = false;
         this._paused = false;
-        this._over = false;
 
         this._currentLevel = null;
 
@@ -37,7 +36,7 @@ define("Build", [
         }.bind(this));
 
         this._nextLevelTimer = new EventTimer(Game.LEVEL_RESET_INTERVAL, function () {
-            this.nextLevel();
+            //this.nextLevel();
         }.bind(this));
     }
 
@@ -48,8 +47,8 @@ define("Build", [
     Game.GRAV_CONST = 1;
     Game.GRAV_MIN_DISTANCE = 200;
 
-    Game.PARTICLES = 1;
-    Game.SHADOW_BLUR = 0.1;
+    Game.PARTICLES = 0.5;
+    Game.SHADOW_BLUR = 0.5;
 
     Game.INIT_LEVEL_NUM = -1;
     Game.LEVEL_RESET_INTERVAL = 3000;
@@ -97,7 +96,7 @@ define("Build", [
                 scoreX = 20;
             for (var i = 0; i < players.length; i++) {
                 var player = players[i];
-                ctx.fillText(player.getScore(), scoreX, 20);
+                ctx.fillText(player._score_interp, scoreX, 20);
                 scoreX += 20;
 
                 var livesX = 15;
@@ -130,12 +129,8 @@ define("Build", [
             this._paused = false;
         },
 
-        over: function () {
-            this._over = true;
-        },
-
         isOver: function () {
-            return this._over;
+            return this.entityManager.getPlayers().length == 0;
         },
 
         pause: function () {
